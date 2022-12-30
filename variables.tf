@@ -19,6 +19,12 @@ variable "zone" {
   default     = null
 }
 
+variable "machine_type" {
+  type        = string
+  description = "The machine type to run Atlantis on"
+  default     = "n2-standard-2"
+}
+
 variable "env_vars" {
   type = list(object({
     name  = string

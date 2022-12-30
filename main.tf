@@ -41,7 +41,7 @@ resource "google_compute_instance_template" "atlantis" {
   }
 
   instance_description = "VM running Atlantis in a containerized environment using Docker"
-  machine_type         = "n2-standard-2"
+  machine_type         = var.machine_type
   can_ip_forward       = false
 
   scheduling {
