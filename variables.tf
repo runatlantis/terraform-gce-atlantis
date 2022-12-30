@@ -49,6 +49,11 @@ variable "domain" {
   description = "Domain to associate Atlantis with and to request a managed SSL certificate for"
 }
 
+variable "block_project_ssh_keys" {
+  type        = bool
+  description = "Blocks the use of project-wide publich SSH keys"
+  default     = false
+}
 
 variable "pull_latest_prerelease" {
   type        = bool

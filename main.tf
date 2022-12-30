@@ -33,6 +33,7 @@ resource "google_compute_instance_template" "atlantis" {
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
     "google-logging-enabled"    = true
+    "block-project-ssh-keys"    = var.block_project_ssh_keys
   }
 
   labels = {
