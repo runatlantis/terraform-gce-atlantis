@@ -39,11 +39,6 @@ variable "service_account" {
   }
 }
 
-variable "project_id" {
-  type        = string
-  description = "The ID of the project in which the resource belongs"
-}
-
 variable "domain" {
   type        = string
   description = "Domain to associate Atlantis with and to request a managed SSL certificate for"
@@ -59,4 +54,9 @@ variable "pull_latest_prerelease" {
   type        = bool
   description = "Whether to pull the latest prerelease of Atlantis or not"
   default     = false
+}
+
+variable "project_id" {
+  type        = string
+  description = "The ID of the project in which the resource belongs"
 }
