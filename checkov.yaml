@@ -1,0 +1,5 @@
+directory: .
+compact: true
+quiet: true
+framework: terraform
+skip-check:
