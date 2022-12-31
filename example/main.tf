@@ -43,7 +43,7 @@ module "atlantis" {
     },
     {
       name  = "ATLANTIS_REPO_CONFIG_JSON"
-      value = jsonencode(yamldecode(file("server-atlantis.yaml")))
+      value = jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml")))
     }
   ]
   domain     = "atlantis.example.com"
