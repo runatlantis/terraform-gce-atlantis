@@ -34,7 +34,7 @@ For an overview of all possible environment variables, see: [Atlantis Server Con
 
 ## Service Account
 
-As Google recommends custom service accounts and permissions granted via IAM Roles. We decided that you must bring your own service account.
+As Google recommends custom service accounts and permissions granted via IAM Roles. We advice that you bring your own service account.
 
 Note that you must grant the relevant permissions to your service account yourself, e.g. Storage related permissions for the Terraform state bucket and other permissions in order to create resources through Terraform.
 
