@@ -64,7 +64,7 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 ```
 
-## DNS Record
+## DNS Record - Important
 
 As this module creates an External HTTPS Load Balancer together with a managed SSL certificate for the domain you provided, an A record has to be created for your domain to successfully provision the certificate.
 
