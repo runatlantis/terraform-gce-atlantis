@@ -15,6 +15,23 @@ This module expects that you already own or create the below resources yourself.
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/server-atlantis.yaml).
 
 
+## Configuring Atlantis
+
+Atlantis offers the ability to configure everything through environment variables.
+
+This module exposes a variable: `var.env_vars` where you can set any environment variable you need.
+
+```hcl
+env_vars = [
+    {
+      name  = "ATLANTIS_EXAMPLE"
+      value = "example"
+    }
+  ]
+```
+
+For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)
+
 ## Service Account
 
 As Google recommends custom service accounts and permissions granted via IAM Roles. We decided that you must bring your own service account.
