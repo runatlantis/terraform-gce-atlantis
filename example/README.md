@@ -1,5 +1,6 @@
 # Example usage
 
+Read through the below before you deploy this module.
 
 ## Prerequisites
 
