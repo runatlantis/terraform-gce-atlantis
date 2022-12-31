@@ -4,10 +4,8 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
+        exclude: ^example/
       - id: terraform_docs
-      - id: terraform_checkov
-        args:
-          - --args=--config-file checkov.yaml
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:

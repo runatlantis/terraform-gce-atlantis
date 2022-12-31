@@ -12,7 +12,7 @@ resource "google_dns_record_set" "default" {
 }
 
 module "atlantis" {
-  source     = "bschaatsbergen/atlantis-on-gce"
+  source     = "../."
   name       = "atlantis"
   subnetwork = google_compute_network.default.name
   region     = google_compute_subnetwork.default.name
