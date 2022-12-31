@@ -40,7 +40,7 @@ Note that you must grant the relevant permissions to your service account yourse
 
 ### Important
 
-The `roles/logging.logWriter` role should be attached to the service account in order to write logs to Cloud Logging.
+The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging.
 
 ### Example
 
@@ -53,6 +53,12 @@ resource "google_service_account" "atlantis" {
 
 resource "google_project_iam_member" "atlantis_log_writer" {
   role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.atlantis.email}"
+  project = var.project_id
+}
+
+resource "google_project_iam_member" "atlantis_metric_writer" {
+  role    = "roles/monitoring.metricWriter"
   member  = "serviceAccount:${google_service_account.atlantis.email}"
   project = var.project_id
 }
