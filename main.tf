@@ -16,7 +16,6 @@ data "google_compute_zones" "available" {
   project = var.project_id
 }
 
-
 data "google_compute_image" "cos" {
   family  = "cos-stable"
   project = "cos-cloud"
