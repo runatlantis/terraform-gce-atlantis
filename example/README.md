@@ -40,7 +40,7 @@ Note that you must grant the relevant permissions to your service account yourse
 
 ### Important
 
-The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging.
+The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
 
 ### Example
 
