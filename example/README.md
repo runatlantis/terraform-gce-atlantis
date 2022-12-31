@@ -19,7 +19,7 @@ See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master
 
 Atlantis offers the ability to configure everything through environment variables.
 
-This module exposes a variable: `var.env_vars` where you can pass any environment variable you need.
+This module exposes a variable: `var.env_vars` where you can pass any environment variable you want.
 
 ```hcl
 env_vars = [
