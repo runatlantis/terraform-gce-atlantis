@@ -7,8 +7,8 @@ Read through the below before you deploy this module.
 This module expects that you already own or create the below resources yourself.
 
 - Google network and subnetwork
-- Domain (see below)
-- Service account (see below)
+- Domain [see below](#dns-record)
+- Service account [see below](#service-account)
 
 ## How to deploy
 
@@ -38,7 +38,7 @@ As Google recommends custom service accounts and permissions granted via IAM Rol
 
 Note that you must grant the relevant permissions to your service account yourself, e.g. Storage related permissions for the Terraform state bucket and other permissions in order to create resources through Terraform.
 
-### Important
+### Permissions
 
 The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
 
@@ -64,7 +64,7 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 ```
 
-## DNS Record - Important
+## DNS Record
 
 As this module creates an External HTTPS Load Balancer together with a managed SSL certificate for the domain you provided, an A record has to be created for your domain to successfully provision the certificate.
 
