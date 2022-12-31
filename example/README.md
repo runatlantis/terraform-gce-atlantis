@@ -6,9 +6,9 @@ Read through the below before you deploy this module.
 
 This module expects that you already own or create the below resources yourself.
 
-- Domain
 - Google network and subnetwork
-- Service account
+- Domain (see below)
+- Service account (see below)
 
 ## How to deploy
 
