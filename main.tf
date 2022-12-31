@@ -68,7 +68,6 @@ resource "google_compute_instance_template" "atlantis" {
   }
 
   service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = var.service_account.email
     scopes = var.service_account.scopes
   }
