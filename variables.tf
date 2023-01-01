@@ -61,8 +61,3 @@ variable "pull_latest_prerelease" {
   description = "Whether to pull the latest prerelease of Atlantis or not"
   default     = false
 }
-
-variable "project_id" {
-  type        = string
-  description = "The ID of the project in which the resource belongs"
-}
