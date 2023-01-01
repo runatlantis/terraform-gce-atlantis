@@ -1,7 +1,3 @@
-provider "google" {
-  project = var.project_id
-}
-
 locals {
   zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[0]
   // We produce a map that contains all environment variables to make the below lookup possible.
