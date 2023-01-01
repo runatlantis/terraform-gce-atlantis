@@ -12,7 +12,7 @@ This module expects that you already own or create the below resources yourself.
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/server-atlantis.yaml).
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic/server-atlantis.yaml).
 
 
 ## Configuring Atlantis

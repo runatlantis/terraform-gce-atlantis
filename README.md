@@ -4,7 +4,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 ## Usage
 
-See the [`example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example) directory.
+See the [`example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic) directory.
 
 ## Feature highlights
 
