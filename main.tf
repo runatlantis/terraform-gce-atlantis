@@ -25,11 +25,7 @@ resource "google_compute_disk" "atlantis" {
   name = var.name
   type = "pd-ssd"
   zone = local.zone
-
-  # // Terraform updates the disk size if upsizing is detected but recreates the disk if downsizing is requested
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
+  size = 25
 }
 
 resource "google_compute_instance_template" "atlantis" {
