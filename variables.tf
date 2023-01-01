@@ -25,6 +25,12 @@ variable "machine_type" {
   default     = "n2-standard-2"
 }
 
+variable "image" {
+  type        = string
+  description = "Docker image. This is most often a reference to a container located in a container registry."
+  default     = "ghcr.io/runatlantis/atlantis:latest"
+}
+
 variable "env_vars" {
   type = list(object({
     name  = string
@@ -53,11 +59,5 @@ variable "domain" {
 variable "block_project_ssh_keys" {
   type        = bool
   description = "Blocks the use of project-wide publich SSH keys"
-  default     = false
-}
-
-variable "pull_latest_prerelease" {
-  type        = bool
-  description = "Whether to pull the latest prerelease of Atlantis or not"
   default     = false
 }
