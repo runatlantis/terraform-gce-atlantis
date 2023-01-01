@@ -7,9 +7,8 @@ locals {
 }
 
 data "google_compute_zones" "available" {
-  status  = "UP"
-  region  = var.region
-  project = var.project_id
+  status = "UP"
+  region = var.region
 }
 
 data "google_compute_image" "cos" {
@@ -67,8 +66,6 @@ resource "google_compute_instance_template" "atlantis" {
     scopes = var.service_account.scopes
   }
 
-  project = var.project_id
-
   // Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
   // In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
@@ -107,8 +104,6 @@ resource "google_compute_instance_group_manager" "atlantis" {
     health_check      = google_compute_health_check.atlantis.id
     initial_delay_sec = 30
   }
-
-  project = var.project_id
 }
 
 resource "google_compute_global_address" "atlantis" {

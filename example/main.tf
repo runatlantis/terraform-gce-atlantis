@@ -46,6 +46,5 @@ module "atlantis" {
       value = jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml")))
     }
   ]
-  domain     = "atlantis.example.com"
-  project_id = var.project_id
+  domain = "atlantis.example.com"
 }
