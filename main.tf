@@ -21,6 +21,17 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
+resource "google_compute_disk" "atlantis" {
+  name = var.name
+  type = "pd-ssd"
+  zone = local.zone
+
+  # // Terraform updates the disk size if upsizing is detected but recreates the disk if downsizing is requested
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
+}
+
 resource "google_compute_instance_template" "atlantis" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix = "${var.name}-"
@@ -48,13 +59,22 @@ resource "google_compute_instance_template" "atlantis" {
     on_host_maintenance = "MIGRATE"
   }
 
-  // Create a new boot disk from an image
+  // Ephemeral OS boot disk
   disk {
     source_image = data.google_compute_image.cos.self_link
     auto_delete  = true
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
+  }
+
+  // Persistent data disk for Atlantis
+  disk {
+    source      = google_compute_disk.atlantis.name
+    boot        = false
+    mode        = "READ_WRITE"
+    device_name = "atlantis-disk-0"
+    auto_delete = false
   }
 
   network_interface {
