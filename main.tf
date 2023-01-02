@@ -4,6 +4,13 @@ locals {
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
 }
 
+data "template_file" "atlantis_init" {
+  template = file("${path.module}/startup-script.sh")
+  vars = {
+    disk_name = "atlantis-disk-0"
+  }
+}
+
 data "google_compute_zones" "available" {
   status = "UP"
   region = var.region
@@ -14,6 +21,13 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
+resource "google_compute_disk" "atlantis" {
+  name = var.name
+  type = "pd-ssd"
+  zone = local.zone
+  size = 25
+}
+
 resource "google_compute_instance_template" "atlantis" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix = "${var.name}-"
@@ -21,6 +35,8 @@ resource "google_compute_instance_template" "atlantis" {
   region      = var.region
 
   tags = ["atlantis"]
+
+  metadata_startup_script = data.template_file.atlantis_init.rendered
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
@@ -41,7 +57,7 @@ resource "google_compute_instance_template" "atlantis" {
     on_host_maintenance = var.enable_confidential_compute ? "TERMINATE" : "MIGRATE"
   }
 
-  // Create a new boot disk from an image
+  // Ephemeral OS boot disk
   disk {
     source_image = data.google_compute_image.cos.self_link
     auto_delete  = true
@@ -55,6 +71,15 @@ resource "google_compute_instance_template" "atlantis" {
         kms_key_self_link = var.disk_kms_key_self_link
       }
     }
+  }
+
+  // Persistent data disk for Atlantis
+  disk {
+    source      = google_compute_disk.atlantis.name
+    boot        = false
+    mode        = "READ_WRITE"
+    device_name = "atlantis-disk-0"
+    auto_delete = false
   }
 
   network_interface {
