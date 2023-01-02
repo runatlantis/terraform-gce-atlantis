@@ -21,7 +21,7 @@ module "atlantis" {
     # This is similar to how docker volumes are declared.
     volumeMounts = [
       {
-        mountPath = "/example/dir"
+        mountPath = "/home/atlantis"
         name      = "atlantis-disk-0"
         readOnly  = false
       },

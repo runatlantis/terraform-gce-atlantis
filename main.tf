@@ -4,6 +4,13 @@ locals {
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
 }
 
+data "template_file" "atlantis_init" {
+  template = file("startup-script.sh")
+  vars = {
+    disk_name = "atlantis-disk-0"
+  }
+}
+
 data "google_compute_zones" "available" {
   status = "UP"
   region = var.region
@@ -28,6 +35,8 @@ resource "google_compute_instance_template" "atlantis" {
   region      = var.region
 
   tags = ["atlantis"]
+
+  metadata_startup_script = data.template_file.atlantis_init.rendered
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
