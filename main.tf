@@ -5,7 +5,7 @@ locals {
 }
 
 data "template_file" "atlantis_init" {
-  template = file("startup-script.sh")
+  template = file("${path.module}/startup-script.sh")
   vars = {
     disk_name = "atlantis-disk-0"
   }
