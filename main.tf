@@ -23,9 +23,9 @@ resource "google_compute_instance_template" "atlantis" {
   tags = ["atlantis"]
 
   metadata = {
-    "gce-container-declaration" = module.atlantis.metadata_value
-    "google-logging-enabled"    = true
-    "block-project-ssh-keys"    = var.block_project_ssh_keys
+    "user-data"              = file("user-data.yaml")
+    "google-logging-enabled" = true
+    "block-project-ssh-keys" = var.block_project_ssh_keys
   }
 
   labels = {
@@ -55,6 +55,12 @@ resource "google_compute_instance_template" "atlantis" {
         kms_key_self_link = var.disk_kms_key_self_link
       }
     }
+  }
+
+  disk {
+    device_name  = "atlantis-data"
+    mode         = "READ_WRITE"
+    disk_size_gb = 50
   }
 
   network_interface {
@@ -112,6 +118,11 @@ resource "google_compute_instance_group_manager" "atlantis" {
   auto_healing_policies {
     health_check      = google_compute_health_check.atlantis.id
     initial_delay_sec = 60
+  }
+
+  stateful_disk {
+    device_name = "atlantis-data"
+    delete_rule = "NEVER"
   }
 }
 

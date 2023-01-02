@@ -1,0 +1,109 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/format-disk-atlantis-data.service
+    permissions: '0644'
+    owner: root
+    content: |
+      [Unit]
+      Description=Format atlantis data disk once
+      Requires=dev-disk-by\x2did-google\x2datlantis\x2ddata.device
+      After=dev-disk-by\x2did-google\x2datlantis\x2ddata.device
+
+      [Service]
+      ExecStart=/bin/sh -c \
+      '/sbin/blkid /dev/disk/by-id/google-atlantis-data || /sbin/mkfs.ext4 /dev/disk/by-id/google-atlantis-data'
+      RemainAfterExit=yes
+      Type=oneshot
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/mnt-disks-atlantis\x2ddata.mount
+    permissions: '0644'
+    owner: root
+    content: |
+      [Unit]
+      Description=The Atlantis Data
+      Requires=format-disk-atlantis-data.service
+      After=format-disk-atlantis-data.service
+
+      [Mount]
+      What=/dev/disk/by-id/google-data
+      Where=/mnt/disks/atlantis-data
+      Type=ext4
+      Options=defaults
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/atlantis.config
+    permissions: '0644'
+    owner: root
+    content: |
+      repos:
+        - id: /.*/
+          apply_requirements: [mergeable]
+          allowed_overrides: [apply_requirements, workflow]
+          allow_custom_workflows: true
+          delete_source_branch_on_merge: true
+
+  - path: /etc/atlantis.env
+    permissions: '0640'
+    owner: root
+    content: |
+      ATLANTIS_GH_USER=myuser
+      ATLANTIS_GH_TOKEN=token
+      ATLANTIS_GH_WEBHOOK_SECRET=secret
+      ATLANTIS_REPO_ALLOWLIST=github.com/myorg/*
+      ATLANTIS_ATLANTIS_URL=https://atlantis.example.com
+
+  - path: /etc/systemd/system/atlantis.service
+    permissions: '0644'
+    owner: root
+    content: |
+      [Unit]
+      Description=Atlantis
+      RequiresMountsFor=/mnt/disks/atlantis-data
+      After=firewall-config.service
+
+      [Service]
+      Type=simple
+
+      ExecStop=/usr/bin/docker stop atlantis
+
+      ExecStart=/usr/bin/docker run \
+        --init \
+        --rm \
+        --name atlantis \
+        --network host \
+        --volume /mnt/disks/atlantis-data:/mnt/disks/atlantis-data \
+        --volume /etc/atlantis.config:/etc/atlantis.config \
+        --env-file /etc/atlantis.env \
+        ghcr.io/runatlantis/atlantis:v0.21.0 \
+        --data-dir /mnt/disks/atlantis-data
+
+      Restart=always
+      SuccessExitStatus=0 SIGTERM
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/firewall-config.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Configures the host firewall
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=true
+      ExecStart=/sbin/iptables -A INPUT -p tcp --dport 4141 -j ACCEPT
+      ExecStop=/sbin/iptables -A INPUT -p tcp --dport 4141 -j DROP
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl start atlantis.service firewall-config.service
