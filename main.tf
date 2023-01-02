@@ -100,7 +100,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   auto_healing_policies {
     health_check      = google_compute_health_check.atlantis.id
-    initial_delay_sec = 30
+    initial_delay_sec = 60
   }
 }
 
