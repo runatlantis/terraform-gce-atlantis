@@ -2,6 +2,8 @@ locals {
   zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[0]
   // The default port that Atlantis runs on is 4141.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
+  // Atlantis its home directory is "/home/atlantis".
+  atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
 }
 
 data "template_file" "atlantis_init" {
@@ -136,7 +138,7 @@ module "atlantis" {
     # This is similar to how docker volumes are declared.
     volumeMounts = [
       {
-        mountPath = "/home/atlantis"
+        mountPath = local.atlantis_data_dir
         name      = "atlantis-disk-0"
         readOnly  = false
       },
