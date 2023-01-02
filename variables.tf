@@ -25,12 +25,27 @@ variable "machine_type" {
   default     = "n2-standard-2"
 }
 
+variable "disk_kms_key_self_link" {
+  type        = string
+  description = "The self link of the encryption key that is stored in Google Cloud KMS"
+  default     = null
+}
+
+variable "enable_confidential_compute" {
+  type        = bool
+  description = "Defines whether the instance should have confidential compute enabled"
+  default     = false
+}
+
+variable "image" {
+  type        = string
+  description = "Docker image. This is most often a reference to a container located in a container registry."
+  default     = "ghcr.io/runatlantis/atlantis:latest"
+}
+
 variable "env_vars" {
-  type = list(object({
-    name  = string
-    value = string
-  }))
-  description = "Contains a list of key-value pairs representing environment variables and their respective values"
+  type        = map(any)
+  description = "Key-value pairs representing environment variables and their respective values"
 }
 
 variable "service_account" {
@@ -54,15 +69,4 @@ variable "block_project_ssh_keys" {
   type        = bool
   description = "Blocks the use of project-wide publich SSH keys"
   default     = false
-}
-
-variable "pull_latest_prerelease" {
-  type        = bool
-  description = "Whether to pull the latest prerelease of Atlantis or not"
-  default     = false
-}
-
-variable "project_id" {
-  type        = string
-  description = "The ID of the project in which the resource belongs"
 }

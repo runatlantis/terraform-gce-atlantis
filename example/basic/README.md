@@ -12,7 +12,7 @@ This module expects that you already own or create the below resources yourself.
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/server-atlantis.yaml).
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic/server-atlantis.yaml).
 
 
 ## Configuring Atlantis
@@ -22,12 +22,9 @@ Atlantis offers the ability to configure everything through environment variable
 This module exposes a variable: `var.env_vars` where you can pass any environment variable you want.
 
 ```hcl
-env_vars = [
-    {
-      name  = "ATLANTIS_EXAMPLE"
-      value = "example"
-    }
-  ]
+env_vars = {
+  ATLANTIS_EXAMPLE = "example"
+}
 ```
 
 For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)

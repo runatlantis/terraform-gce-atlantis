@@ -1,19 +1,12 @@
-provider "google" {
-  project = var.project_id
-}
-
 locals {
   zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[0]
-  // We produce a map that contains all environment variables to make the below lookup possible.
-  flattened_env_vars = { for env_var in var.env_vars : env_var.name => env_var.value }
   // The default port that Atlantis runs on is 4141.
-  atlantis_port = lookup(local.flattened_env_vars, "ATLANTIS_PORT", 4141)
+  atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
 }
 
 data "google_compute_zones" "available" {
-  status  = "UP"
-  region  = var.region
-  project = var.project_id
+  status = "UP"
+  region = var.region
 }
 
 data "google_compute_image" "cos" {
@@ -52,7 +45,7 @@ resource "google_compute_instance_template" "atlantis" {
 
   scheduling {
     automatic_restart   = true
-    on_host_maintenance = "MIGRATE"
+    on_host_maintenance = var.enable_confidential_compute ? "TERMINATE" : "MIGRATE"
   }
 
   // Ephemeral OS boot disk
@@ -62,6 +55,13 @@ resource "google_compute_instance_template" "atlantis" {
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
+
+    dynamic "disk_encryption_key" {
+      for_each = var.disk_kms_key_self_link != null ? [1] : []
+      content {
+        kms_key_self_link = var.disk_kms_key_self_link
+      }
+    }
   }
 
   // Persistent data disk for Atlantis
@@ -82,12 +82,14 @@ resource "google_compute_instance_template" "atlantis" {
     enable_vtpm                 = true
   }
 
+  confidential_instance_config {
+    enable_confidential_compute = var.enable_confidential_compute
+  }
+
   service_account {
     email  = var.service_account.email
     scopes = var.service_account.scopes
   }
-
-  project = var.project_id
 
   // Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
   // In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
@@ -125,10 +127,8 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   auto_healing_policies {
     health_check      = google_compute_health_check.atlantis.id
-    initial_delay_sec = 30
+    initial_delay_sec = 60
   }
-
-  project = var.project_id
 }
 
 resource "google_compute_global_address" "atlantis" {
@@ -155,9 +155,9 @@ resource "google_compute_backend_service" "atlantis" {
   }
 
   backend {
-    balancing_mode        = "RATE"
-    max_rate_per_instance = "500"
-    group                 = google_compute_instance_group_manager.atlantis.instance_group
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+    group           = google_compute_instance_group_manager.atlantis.instance_group
   }
 }
 

@@ -20,32 +20,13 @@ module "atlantis" {
     email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]
   }
-  env_vars = [
-    {
-      name  = "ATLANTIS_GH_USER"
-      value = "myuser"
-    },
-    {
-      name  = "ATLANTIS_GH_TOKEN"
-      value = "token"
-    },
-    {
-      name  = "ATLANTIS_GH_WEBHOOK_SECRET"
-      value = "secret"
-    },
-    {
-      name  = "ATLANTIS_REPO_ALLOWLIST"
-      value = "github.com/myorg/*"
-    },
-    {
-      name  = "ATLANTIS_ATLANTIS_URL"
-      value = "https://atlantis.example.com"
-    },
-    {
-      name  = "ATLANTIS_REPO_CONFIG_JSON"
-      value = jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml")))
-    }
-  ]
-  domain     = "atlantis.example.com"
-  project_id = var.project_id
+  env_vars = {
+    ATLANTIS_GH_USER           = "myuser"
+    ATLANTIS_GH_TOKEN          = "token"
+    ATLANTIS_GH_WEBHOOK_SECRET = "secret"
+    ATLANTIS_REPO_ALLOWLIST    = "github.com/myorg/*"
+    ATLANTIS_ATLANTIS_URL      = "https://atlantis.example.com"
+    ATLANTIS_REPO_CONFIG_JSON  = jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml")))
+  }
+  domain = "atlantis.example.com"
 }

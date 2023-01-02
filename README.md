@@ -4,7 +4,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 ## Usage
 
-See the [`example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example) directory.
+See the [`example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/example/basic) directory.
 
 ## Feature highlights
 
@@ -62,12 +62,13 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_block_project_ssh_keys"></a> [block\_project\_ssh\_keys](#input\_block\_project\_ssh\_keys) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
+| <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for | `string` | n/a | yes |
-| <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Contains a list of key-value pairs representing environment variables and their respective values | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | n/a | yes |
+| <a name="input_enable_confidential_compute"></a> [enable\_confidential\_compute](#input\_enable\_confidential\_compute) | Defines whether the instance should have confidential compute enabled | `bool` | `false` | no |
+| <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
+| <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry. | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on | `string` | `"n2-standard-2"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The ID of the project in which the resource belongs | `string` | n/a | yes |
-| <a name="input_pull_latest_prerelease"></a> [pull\_latest\_prerelease](#input\_pull\_latest\_prerelease) | Whether to pull the latest prerelease of Atlantis or not | `bool` | `false` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |
 | <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | Name of the subnetwork to attach a network interface to | `string` | n/a | yes |
