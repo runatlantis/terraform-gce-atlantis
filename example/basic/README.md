@@ -22,12 +22,9 @@ Atlantis offers the ability to configure everything through environment variable
 This module exposes a variable: `var.env_vars` where you can pass any environment variable you want.
 
 ```hcl
-env_vars = [
-    {
-      name  = "ATLANTIS_EXAMPLE"
-      value = "example"
-    }
-  ]
+env_vars = {
+  ATLANTIS_EXAMPLE = "example"
+}
 ```
 
 For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)
