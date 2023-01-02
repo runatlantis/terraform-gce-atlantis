@@ -139,9 +139,9 @@ resource "google_compute_backend_service" "atlantis" {
   }
 
   backend {
-    balancing_mode        = "RATE"
-    max_rate_per_instance = "500"
-    group                 = google_compute_instance_group_manager.atlantis.instance_group
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+    group           = google_compute_instance_group_manager.atlantis.instance_group
   }
 }
 
