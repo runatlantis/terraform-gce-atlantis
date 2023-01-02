@@ -38,7 +38,7 @@ resource "google_compute_instance_template" "atlantis" {
 
   scheduling {
     automatic_restart   = true
-    on_host_maintenance = "MIGRATE"
+    on_host_maintenance = var.enable_confidential_compute ? "TERMINATE" : "MIGRATE"
   }
 
   // Create a new boot disk from an image
@@ -48,6 +48,13 @@ resource "google_compute_instance_template" "atlantis" {
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
+
+    dynamic "disk_encryption_key" {
+      for_each = var.disk_kms_key_self_link != null ? [1] : []
+      content {
+        kms_key_self_link = var.disk_kms_key_self_link
+      }
+    }
   }
 
   network_interface {
@@ -57,6 +64,10 @@ resource "google_compute_instance_template" "atlantis" {
   shielded_instance_config {
     enable_integrity_monitoring = true
     enable_vtpm                 = true
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute = var.enable_confidential_compute
   }
 
   service_account {
