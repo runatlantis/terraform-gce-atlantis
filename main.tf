@@ -1,9 +1,7 @@
 locals {
   zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[0]
-  // We produce a map that contains all environment variables to make the below lookup possible.
-  flattened_env_vars = { for env_var in var.env_vars : env_var.name => env_var.value }
   // The default port that Atlantis runs on is 4141.
-  atlantis_port = lookup(local.flattened_env_vars, "ATLANTIS_PORT", 4141)
+  atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
 }
 
 data "google_compute_zones" "available" {
@@ -102,7 +100,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   auto_healing_policies {
     health_check      = google_compute_health_check.atlantis.id
-    initial_delay_sec = 30
+    initial_delay_sec = 60
   }
 }
 

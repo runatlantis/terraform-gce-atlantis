@@ -32,11 +32,8 @@ variable "image" {
 }
 
 variable "env_vars" {
-  type = list(object({
-    name  = string
-    value = string
-  }))
-  description = "Contains a list of key-value pairs representing environment variables and their respective values"
+  type        = map(any)
+  description = "Key-value pairs representing environment variables and their respective values"
 }
 
 variable "service_account" {
