@@ -138,6 +138,15 @@ resource "google_compute_instance_group_manager" "atlantis" {
     health_check      = google_compute_health_check.atlantis.id
     initial_delay_sec = 60
   }
+
+  update_policy {
+    type                           = "PROACTIVE"
+    minimal_action                 = "REPLACE"
+    most_disruptive_allowed_action = "REPLACE"
+    max_surge_fixed                = 0
+    max_unavailable_fixed          = 5
+    replacement_method             = "RECREATE"
+  }
 }
 
 resource "google_compute_global_address" "atlantis" {
