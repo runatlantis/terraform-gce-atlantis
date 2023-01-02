@@ -25,6 +25,18 @@ variable "machine_type" {
   default     = "n2-standard-2"
 }
 
+variable "disk_kms_key_self_link" {
+  type        = string
+  description = "The self link of the encryption key that is stored in Google Cloud KMS"
+  default     = null
+}
+
+variable "enable_confidential_compute" {
+  type        = bool
+  description = "Defines whether the instance should have confidential compute enabled"
+  default     = false
+}
+
 variable "image" {
   type        = string
   description = "Docker image. This is most often a reference to a container located in a container registry."
