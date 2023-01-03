@@ -179,7 +179,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   update_policy {
     type                           = "PROACTIVE"
-    minimal_action                 = "REPLACE"
+    minimal_action                 = "RESTART"
     most_disruptive_allowed_action = "REPLACE"
     max_surge_fixed                = 0
     max_unavailable_fixed          = 5
