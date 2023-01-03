@@ -7,8 +7,8 @@ locals {
 }
 
 data "cloudinit_config" "atlantis" {
-  gzip          = false
-  base64_encode = false
+  gzip          = true
+  base64_encode = true
 
   # We store the provided environment variables in a .env file on the boot disk
   part {
@@ -173,12 +173,12 @@ module "atlantis" {
   version = "~> 2.0"
 
   container = {
-    image = var.image
+    image   = var.image
+    envFile = "/etc/atlantis/server.env"
     securityContext = {
       privileged : true
     }
     tty : true
-    envFile = "/etc/atlantis/server.env"
 
     # Declare volumes to be mounted.
     # This is similar to how docker volumes are declared.
