@@ -68,7 +68,7 @@ variable "service_account" {
 
 variable "domain" {
   type        = string
-  description = "Domain to associate Atlantis with and to request a managed SSL certificate for"
+  description = "Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://`"
 }
 
 variable "block_project_ssh_keys" {
