@@ -39,19 +39,19 @@ data "cloudinit_config" "atlantis" {
           permissions = "0644"
           owner       = "root"
           content     = <<EOF
-          [Unit]
-          Description=Chown the Atlantis mount
-          Wants=konlet-startup.service
-          After=konlet-startup.service
+            [Unit]
+            Description=Chown the Atlantis mount
+            Wants=konlet-startup.service
+            After=konlet-startup.service
 
-          [Service]
-          ExecStart=/bin/chown 100 /mnt/disks/gce-containers-mounts/gce-persistent-disks/atlantis-disk-0
-          Restart=on-failure
-          RestartSec=30
-          StandardOutput=journal+console
+            [Service]
+            ExecStart=/bin/chown 100 /mnt/disks/gce-containers-mounts/gce-persistent-disks/atlantis-disk-0
+            Restart=on-failure
+            RestartSec=30
+            StandardOutput=journal+console
 
-          [Install]
-          WantedBy=multi-user.target
+            [Install]
+            WantedBy=multi-user.target
           EOF
         }
       ]
