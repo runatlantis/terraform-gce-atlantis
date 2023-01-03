@@ -6,13 +6,6 @@ locals {
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
 }
 
-data "template_file" "atlantis_init" {
-  template = file("${path.module}/startup-script.sh")
-  vars = {
-    disk_name = "atlantis-disk-0"
-  }
-}
-
 data "google_compute_zones" "available" {
   status = "UP"
   region = var.region
@@ -38,7 +31,7 @@ resource "google_compute_instance_template" "atlantis" {
 
   tags = ["atlantis"]
 
-  metadata_startup_script = data.template_file.atlantis_init.rendered
+  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
@@ -54,9 +47,14 @@ resource "google_compute_instance_template" "atlantis" {
   machine_type         = var.machine_type
   can_ip_forward       = false
 
+  // Using the below scheduling configuration,
+  // the managed instance group will recreate the Spot VM if Compute Engine stops them
   scheduling {
-    automatic_restart   = true
-    on_host_maintenance = var.enable_confidential_compute ? "TERMINATE" : "MIGRATE"
+    automatic_restart           = var.use_spot_machine ? false : true
+    preemptible                 = var.use_spot_machine ? true : false
+    provisioning_model          = var.use_spot_machine ? "SPOT" : "STANDARD"
+    on_host_maintenance         = var.use_spot_machine ? "TERMINATE" : "MIGRATE"
+    instance_termination_action = var.use_spot_machine ? "STOP" : null
   }
 
   // Ephemeral OS boot disk
@@ -93,10 +91,6 @@ resource "google_compute_instance_template" "atlantis" {
     enable_vtpm                 = true
   }
 
-  confidential_instance_config {
-    enable_confidential_compute = var.enable_confidential_compute
-  }
-
   service_account {
     email  = var.service_account.email
     scopes = var.service_account.scopes
@@ -106,16 +100,6 @@ resource "google_compute_instance_template" "atlantis" {
   // In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
     create_before_destroy = true
-  }
-}
-
-resource "google_compute_health_check" "atlantis" {
-  name               = var.name
-  check_interval_sec = 1
-  timeout_sec        = 1
-
-  tcp_health_check {
-    port = local.atlantis_port
   }
 }
 
@@ -157,6 +141,16 @@ module "atlantis" {
   ]
 
   restart_policy = "Always"
+}
+
+resource "google_compute_health_check" "atlantis" {
+  name               = var.name
+  check_interval_sec = 1
+  timeout_sec        = 1
+
+  tcp_health_check {
+    port = local.atlantis_port
+  }
 }
 
 resource "google_compute_instance_group_manager" "atlantis" {
