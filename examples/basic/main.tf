@@ -14,12 +14,14 @@ resource "google_dns_record_set" "default" {
 module "atlantis" {
   source     = "../."
   name       = "atlantis"
-  subnetwork = google_compute_network.default.name
-  region     = google_compute_subnetwork.default.name
+  subnetwork = var.subnetwork
+  region     = var.region
   service_account = {
-    email  = google_service_account.atlantis.email
+    email  = var.service_account.email
     scopes = ["cloud-platform"]
   }
+  # Note: environment variables are shown in the Google Cloud UI
+  # See the `examples/secured-env-vars` if you want to protect sensitive information
   env_vars = {
     ATLANTIS_GH_USER           = "myuser"
     ATLANTIS_GH_TOKEN          = "token"
