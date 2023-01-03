@@ -6,13 +6,6 @@ locals {
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
 }
 
-data "template_file" "atlantis_init" {
-  template = file("${path.module}/startup-script.sh")
-  vars = {
-    disk_name = "atlantis-disk-0"
-  }
-}
-
 data "google_compute_zones" "available" {
   status = "UP"
   region = var.region
@@ -38,7 +31,7 @@ resource "google_compute_instance_template" "atlantis" {
 
   tags = ["atlantis"]
 
-  metadata_startup_script = data.template_file.atlantis_init.rendered
+  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
