@@ -6,6 +6,72 @@ locals {
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
 }
 
+data "cloudinit_config" "atlantis" {
+  gzip          = false
+  base64_encode = false
+
+  # We store the provided environment variables in a .env file on the boot disk
+  part {
+    filename     = "server.env"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      write_files = [
+        {
+          path        = "/etc/atlantis/server.env"
+          permissions = "0644"
+          owner       = "root"
+          content     = join("", formatlist("%s=%s\n", keys(var.env_vars), values(var.env_vars)))
+        }
+      ]
+    })
+  }
+
+  # We specify a service that changes the owner of the mounted GCE Persistent Disk to the atlantis user
+  part {
+    filename     = "atlantis-chown-disk.service"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      write_files = [
+        {
+          path        = "/etc/systemd/system/atlantis-chown-disk.service"
+          permissions = "0644"
+          owner       = "root"
+          content     = <<EOF
+          [Unit]
+          Description=Chown the Atlantis mount
+          Wants=konlet-startup.service
+          After=konlet-startup.service
+
+          [Service]
+          ExecStart=/bin/chown 100 /mnt/disks/gce-containers-mounts/gce-persistent-disks/atlantis-disk-0
+          Restart=on-failure
+          RestartSec=30
+          StandardOutput=journal+console
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        }
+      ]
+    })
+  }
+
+  // We start the service
+  part {
+    filename     = "runcmda"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      runcmd = [
+        "systemctl daemon-reload",
+        "systemctl start --no-block atlantis-chown-disk.service"
+      ]
+    })
+  }
+}
+
 data "google_compute_zones" "available" {
   status = "UP"
   region = var.region
@@ -31,12 +97,11 @@ resource "google_compute_instance_template" "atlantis" {
 
   tags = ["atlantis"]
 
-  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
-
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
     "google-logging-enabled"    = true
     "block-project-ssh-keys"    = var.block_project_ssh_keys
+    "user-data"                 = data.cloudinit_config.atlantis.rendered
   }
 
   labels = {
@@ -113,10 +178,7 @@ module "atlantis" {
       privileged : true
     }
     tty : true
-    env = [for key, value in var.env_vars : {
-      name  = key
-      value = value
-    }]
+    envFile = "/etc/atlantis/server.env"
 
     # Declare volumes to be mounted.
     # This is similar to how docker volumes are declared.
