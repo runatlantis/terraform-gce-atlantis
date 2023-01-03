@@ -55,8 +55,10 @@ resource "google_compute_instance_template" "atlantis" {
   can_ip_forward       = false
 
   scheduling {
-    automatic_restart   = true
-    on_host_maintenance = var.enable_confidential_compute ? "TERMINATE" : "MIGRATE"
+    automatic_restart   = var.use_spot_machine ? false : true
+    preemptible         = var.use_spot_machine ? true : false
+    provisioning_model  = var.use_spot_machine ? "SPOT" : "STANDARD"
+    on_host_maintenance = var.use_spot_machine ? "TERMINATE" : "MIGRATE"
   }
 
   // Ephemeral OS boot disk
@@ -91,10 +93,6 @@ resource "google_compute_instance_template" "atlantis" {
   shielded_instance_config {
     enable_integrity_monitoring = true
     enable_vtpm                 = true
-  }
-
-  confidential_instance_config {
-    enable_confidential_compute = var.enable_confidential_compute
   }
 
   service_account {
