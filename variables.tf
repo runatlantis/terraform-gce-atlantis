@@ -25,6 +25,12 @@ variable "machine_type" {
   default     = "n2-standard-2"
 }
 
+variable "persistent_disk_size_gb" {
+  type        = number
+  description = "The size of the persistent disk that Atlantis uses to store its data on"
+  default     = 50
+}
+
 variable "use_spot_machine" {
   type        = bool
   description = "A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed"

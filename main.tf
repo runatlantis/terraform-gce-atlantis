@@ -4,6 +4,7 @@ locals {
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
   // Atlantis its home directory is "/home/atlantis".
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
+  port_name         = "atlantis"
 }
 
 data "google_compute_zones" "available" {
@@ -20,7 +21,7 @@ resource "google_compute_disk" "atlantis" {
   name = var.name
   type = "pd-ssd"
   zone = local.zone
-  size = 25
+  size = var.persistent_disk_size_gb
 }
 
 resource "google_compute_instance_template" "atlantis" {
@@ -73,13 +74,20 @@ resource "google_compute_instance_template" "atlantis" {
     }
   }
 
-  // Persistent data disk for Atlantis
+  // Persistent disk for Atlantis
   disk {
     source      = google_compute_disk.atlantis.name
     boot        = false
     mode        = "READ_WRITE"
     device_name = "atlantis-disk-0"
     auto_delete = false
+
+    dynamic "disk_encryption_key" {
+      for_each = var.disk_kms_key_self_link != null ? [1] : []
+      content {
+        kms_key_self_link = var.disk_kms_key_self_link
+      }
+    }
   }
 
   network_interface {
@@ -151,7 +159,8 @@ resource "google_compute_health_check" "atlantis" {
   unhealthy_threshold = 5
 
   tcp_health_check {
-    port = local.atlantis_port
+    port_name          = local.port_name
+    port_specification = "USE_NAMED_PORT"
   }
 }
 
@@ -168,7 +177,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
   target_size = 1
 
   named_port {
-    name = "http"
+    name = local.port_name
     port = local.atlantis_port
   }
 
@@ -179,7 +188,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   update_policy {
     type                           = "PROACTIVE"
-    minimal_action                 = "RESTART"
+    minimal_action                 = "REPLACE"
     most_disruptive_allowed_action = "REPLACE"
     max_surge_fixed                = 0
     max_unavailable_fixed          = 5
@@ -199,9 +208,9 @@ resource "google_compute_managed_ssl_certificate" "atlantis" {
 }
 
 resource "google_compute_backend_service" "atlantis" {
-  name                  = "${var.name}-backend"
+  name                  = var.name
   protocol              = "HTTP"
-  port_name             = "http"
+  port_name             = local.port_name
   timeout_sec           = "30"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   health_checks         = [google_compute_health_check.atlantis.id]
@@ -218,53 +227,20 @@ resource "google_compute_backend_service" "atlantis" {
 }
 
 resource "google_compute_url_map" "atlantis" {
-  name = "${var.name}-map"
-
+  name            = var.name
   default_service = google_compute_backend_service.atlantis.id
-
-  host_rule {
-    hosts        = ["${var.domain}"]
-    path_matcher = var.name
-  }
-
-  path_matcher {
-    name            = var.name
-    default_service = google_compute_backend_service.atlantis.id
-  }
-}
-
-resource "google_compute_url_map" "https_redirect" {
-  name = "${var.name}-https-redirect-map"
-  default_url_redirect {
-    https_redirect         = true
-    strip_query            = false
-    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
-  }
-}
-
-resource "google_compute_target_http_proxy" "atlantis" {
-  name    = "${var.name}-http-proxy"
-  url_map = google_compute_url_map.https_redirect.id
 }
 
 resource "google_compute_target_https_proxy" "atlantis" {
-  name    = "${var.name}-https-proxy"
+  name    = var.name
   url_map = google_compute_url_map.atlantis.id
   ssl_certificates = [
     google_compute_managed_ssl_certificate.atlantis.id,
   ]
 }
 
-resource "google_compute_global_forwarding_rule" "http" {
-  name                  = "${var.name}-http-lb"
-  target                = google_compute_target_http_proxy.atlantis.id
-  port_range            = "80"
-  ip_address            = google_compute_global_address.atlantis.address
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-}
-
 resource "google_compute_global_forwarding_rule" "https" {
-  name                  = "${var.name}-https-lb"
+  name                  = var.name
   target                = google_compute_target_https_proxy.atlantis.id
   port_range            = "443"
   ip_address            = google_compute_global_address.atlantis.address
