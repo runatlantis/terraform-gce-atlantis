@@ -17,13 +17,6 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
-resource "google_compute_disk" "atlantis" {
-  name = var.name
-  type = "pd-ssd"
-  zone = local.zone
-  size = var.persistent_disk_size_gb
-}
-
 resource "google_compute_instance_template" "atlantis" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix = "${var.name}-"
@@ -76,11 +69,11 @@ resource "google_compute_instance_template" "atlantis" {
 
   // Persistent disk for Atlantis
   disk {
-    source      = google_compute_disk.atlantis.name
-    boot        = false
-    mode        = "READ_WRITE"
-    device_name = "atlantis-disk-0"
-    auto_delete = false
+    device_name  = "atlantis-disk-0"
+    disk_type    = "pd-ssd"
+    mode         = "READ_WRITE"
+    disk_size_gb = var.persistent_disk_size_gb
+    auto_delete  = false
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -179,6 +172,11 @@ resource "google_compute_instance_group_manager" "atlantis" {
   named_port {
     name = local.port_name
     port = local.atlantis_port
+  }
+
+  stateful_disk {
+    device_name = "atlantis-disk-0"
+    delete_rule = "NEVER"
   }
 
   auto_healing_policies {
