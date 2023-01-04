@@ -16,19 +16,6 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
   project = "<your-project-id>"
 }
 
-# As your DNS records might be managed at another registrar's site, we create the DNS record outside of the module.
-# This record is mandatory in order to provision the managed SSL certificate successfully.
-resource "google_dns_record_set" "default" {
-  name         = "<your-domain>."
-  type         = "A"
-  ttl          = 60
-  managed_zone = "<your-managed-zone>"
-  rrdatas = [
-    module.atlantis.ip_address
-  ]
-  project = "<your-project-id>"
-}
-
 module "atlantis" {
   source     = "../../."
   name       = "atlantis"
@@ -51,4 +38,17 @@ module "atlantis" {
     ATLANTIS_REPO_CONFIG_JSON  = jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml")))
   }
   domain = "<your-domain>"
+}
+
+# As your DNS records might be managed at another registrar's site, we create the DNS record outside of the module.
+# This record is mandatory in order to provision the managed SSL certificate successfully.
+resource "google_dns_record_set" "default" {
+  name         = "<your-domain>."
+  type         = "A"
+  ttl          = 60
+  managed_zone = "<your-managed-zone>"
+  rrdatas = [
+    module.atlantis.ip_address
+  ]
+  project = "<your-project-id>"
 }
