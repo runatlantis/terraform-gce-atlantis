@@ -182,7 +182,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
 
   update_policy {
     type                           = "PROACTIVE"
-    minimal_action                 = "REPLACE"
+    minimal_action                 = "RESTART"
     most_disruptive_allowed_action = "REPLACE"
     max_surge_fixed                = 0
     max_unavailable_fixed          = 5
@@ -256,20 +256,22 @@ resource "google_compute_route" "public_internet" {
   dest_range       = "0.0.0.0/0"
   next_hop_gateway = "default-internet-gateway"
   priority         = 0
-  tags             = ["atlantis"]
   project          = var.project
+  tags             = ["atlantis"]
 }
 
 # This firewall rule allows Google Cloud to issue the health checks
 resource "google_compute_firewall" "atlantis_lb_health_check" {
   name        = "${var.name}-lb-health-checks"
   description = "Firewall rule to allow inbound Google Load Balancer health checks to the Atlantis instance"
+  priority    = 0
+  direction   = "INGRESS"
   network     = var.network
   allow {
     protocol = "tcp"
-    ports    = [local.atlantis_port]
   }
   # These are the source IP ranges for health checks (managed by Google Cloud)
   source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
   project       = var.project
+  target_tags   = ["atlantis"]
 }
