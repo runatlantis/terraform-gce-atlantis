@@ -144,8 +144,8 @@ resource "google_compute_health_check" "atlantis" {
   name                = var.name
   check_interval_sec  = 1
   timeout_sec         = 1
-  healthy_threshold   = 5
-  unhealthy_threshold = 4
+  healthy_threshold   = 4
+  unhealthy_threshold = 5
 
   tcp_health_check {
     port = local.atlantis_port
