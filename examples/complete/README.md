@@ -6,15 +6,15 @@ Read through the below before you deploy this module.
 
 This module expects that you already own or create the below resources yourself.
 
-- Google network, subnetwork and a Cloud NAT
-- Domain [see below](#dns-record)
-- Service account [see below](#service-account)
-
-If you would like a complete example including the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
+- Domain, [see below](#dns-record)
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/server-atlantis.yaml).
+
+### Note
+
+The resources in [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) are configured with the least amount of attributes possible to make it work. You likely want to set additional attributes if you bring this to production.
 
 ## Configuring Atlantis
 
@@ -30,6 +30,10 @@ env_vars = {
 
 For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)
 
+### Setting sensitive environment variables
+
+See the [`secured environment variables`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete) for an example on how to deal with sensitive environment variables.
+
 ## Service Account
 
 As Google recommends custom service accounts and permissions granted via IAM Roles. We advice that you bring your own service account.
@@ -40,27 +44,7 @@ Note that you must grant the relevant permissions to your service account yourse
 
 The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
 
-### Example
-
-```hcl
-resource "google_service_account" "atlantis" {
-  account_id   = "atlantis-sa"
-  display_name = "Service Account for Atlantis"
-  project      = var.project_id
-}
-
-resource "google_project_iam_member" "atlantis_log_writer" {
-  role    = "roles/logging.logWriter"
-  member  = "serviceAccount:${google_service_account.atlantis.email}"
-  project = var.project_id
-}
-
-resource "google_project_iam_member" "atlantis_metric_writer" {
-  role    = "roles/monitoring.metricWriter"
-  member  = "serviceAccount:${google_service_account.atlantis.email}"
-  project = var.project_id
-}
-```
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L2-L17)
 
 ## DNS Record
 
@@ -70,15 +54,4 @@ As this module creates an External HTTPS Load Balancer together with a managed S
 
 If you use Cloud DNS and own a managed zone for your domain, use the IP address that's part of the module output to create the A record.
 
-```hcl
-resource "google_dns_record_set" "default" {
-  name         = "atlantis.example.com."
-  type         = "A"
-  ttl          = 60
-  managed_zone = "example-com"
-  rrdatas = [
-    module.atlantis.ip_address
-  ]
-  project = var.project_id
-}
-```
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L43-L54)
