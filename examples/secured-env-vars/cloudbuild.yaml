@@ -10,7 +10,7 @@ steps:
         "--build-arg=ATLANTIS_GH_TOKEN=$$ATLANTIS_GH_TOKEN",
         "--build-arg=ATLANTIS_GH_WEBHOOK_SECRET=$$ATLANTIS_GH_WEBHOOK_SECRET",
       ]
-    dir: "atlantis/gcp-secrets"
+    dir: "."
     secretEnv:
       ["ATLANTIS_GH_USER", "ATLANTIS_GH_TOKEN", "ATLANTIS_GH_WEBHOOK_SECRET"]
 availableSecrets:
