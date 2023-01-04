@@ -150,6 +150,20 @@ resource "google_compute_health_check" "atlantis" {
   tcp_health_check {
     port = local.atlantis_port
   }
+
+  project = var.project
+}
+
+resource "google_compute_health_check" "atlantis_mig" {
+  name                = "${var.name}-mig"
+  healthy_threshold   = 4
+  unhealthy_threshold = 5
+
+  http_health_check {
+    port         = local.atlantis_port
+    request_path = "/healthz"
+  }
+
   project = var.project
 }
 
@@ -163,7 +177,6 @@ resource "google_compute_instance_group_manager" "atlantis" {
     instance_template = google_compute_instance_template.atlantis.id
   }
 
-  target_size = 1
 
   named_port {
     name = local.port_name
@@ -176,16 +189,18 @@ resource "google_compute_instance_group_manager" "atlantis" {
   }
 
   auto_healing_policies {
-    health_check      = google_compute_health_check.atlantis.id
-    initial_delay_sec = 60
+    health_check      = google_compute_health_check.atlantis_mig.id
+    initial_delay_sec = 30
   }
+
+  target_size = 1
 
   update_policy {
     type                           = "PROACTIVE"
     minimal_action                 = "RESTART"
     most_disruptive_allowed_action = "REPLACE"
     max_surge_fixed                = 0
-    max_unavailable_fixed          = 5
+    max_unavailable_fixed          = 1
     replacement_method             = "RECREATE"
   }
   project = var.project
