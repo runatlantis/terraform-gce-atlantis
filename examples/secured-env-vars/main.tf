@@ -9,7 +9,8 @@ resource "google_project_iam_member" "atlantis" {
   for_each = set([
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
-    "roles/secretmanager.secretAccessor"
+    "roles/secretmanager.secretAccessor",
+    "roles/artifactregistry.reader",
   ])
   role    = each.value
   member  = "serviceAccount:${google_service_account.atlantis.email}"
