@@ -138,17 +138,6 @@ module "atlantis" {
   restart_policy = "Always"
 }
 
-resource "google_compute_firewall" "atlantis_lb_health_check" {
-  name    = "${var.name}-lb-health-checks"
-  network = google_compute_network.default.id
-  allow {
-    protocol = "tcp"
-    ports    = [local.atlantis_port]
-  }
-  # These are the source IP ranges for health checks (managed by Google Cloud)
-  source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
-}
-
 resource "google_compute_health_check" "atlantis" {
   name                = var.name
   check_interval_sec  = 1
