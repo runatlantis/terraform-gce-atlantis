@@ -9,8 +9,8 @@ This module expects that you already own or create the below resources yourself.
 - Google network, subnetwork and a Cloud NAT
 - Route to the public internet [see below](#route-to-public-internet)
 - Firewall rule that allows Google Cloud load balancer health checks [see below](#firewall-lb-health-checks)
-- Domain [see below](#dns-record)
 - Service account [see below](#service-account)
+- Domain [see below](#dns-record)
 
 If you prefer an example that includes the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
 
