@@ -139,7 +139,7 @@ module "atlantis" {
 }
 
 resource "google_compute_firewall" "atlantis_lb_health_check" {
-  name    = "atlantis-lb-health-checks"
+  name    = "${var.name}-lb-health-checks"
   network = google_compute_network.default.id
   allow {
     protocol = "tcp"
