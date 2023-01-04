@@ -149,6 +149,7 @@ resource "google_compute_health_check" "atlantis" {
     port_name          = local.port_name
     port_specification = "USE_NAMED_PORT"
   }
+  project = var.project
 }
 
 resource "google_compute_instance_group_manager" "atlantis" {
@@ -189,7 +190,8 @@ resource "google_compute_instance_group_manager" "atlantis" {
 }
 
 resource "google_compute_global_address" "atlantis" {
-  name = var.name
+  name    = var.name
+  project = var.project
 }
 
 resource "google_compute_managed_ssl_certificate" "atlantis" {
@@ -197,6 +199,7 @@ resource "google_compute_managed_ssl_certificate" "atlantis" {
   managed {
     domains = ["${var.domain}"]
   }
+  project = var.project
 }
 
 resource "google_compute_backend_service" "atlantis" {
