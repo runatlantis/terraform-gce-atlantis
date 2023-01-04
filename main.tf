@@ -146,8 +146,7 @@ resource "google_compute_health_check" "atlantis" {
   unhealthy_threshold = 5
 
   tcp_health_check {
-    port_name          = local.port_name
-    port_specification = "USE_NAMED_PORT"
+    port = local.atlantis_port
   }
   project = var.project
 }
