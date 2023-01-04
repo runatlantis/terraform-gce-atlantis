@@ -53,7 +53,7 @@ resource "google_compute_router_nat" "default" {
 }
 
 module "atlantis" {
-  source     = "../../."
+  source     = "bschaatsbergen/atlantis/gce"
   name       = "atlantis"
   network    = google_compute_network.default.name
   subnetwork = google_compute_subnetwork.default.name

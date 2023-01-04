@@ -17,7 +17,7 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 
 module "atlantis" {
-  source     = "../../."
+  source     = "bschaatsbergen/atlantis/gce"
   name       = "atlantis"
   network    = "<your-network>"
   subnetwork = "<your-subnetwork>"

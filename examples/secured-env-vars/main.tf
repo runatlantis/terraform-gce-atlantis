@@ -30,7 +30,7 @@ resource "google_dns_record_set" "default" {
 }
 
 module "atlantis" {
-  source     = "../../."
+  source     = "bschaatsbergen/atlantis/gce"
   name       = "atlantis"
   image      = "<your-image>" # Your wrapper Atlantis Docker image
   network    = "<your-network>"
