@@ -30,6 +30,10 @@ env_vars = {
 
 For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)
 
+### Setting sensitive environment variables
+
+See the [`secured environment variables`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete) for an example on how to deal with sensitive environment variables.
+
 ## Service Account
 
 As Google recommends custom service accounts and permissions granted via IAM Roles. We advice that you bring your own service account.
