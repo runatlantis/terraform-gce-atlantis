@@ -7,8 +7,6 @@ Read through the below before you deploy this module.
 This module expects that you already own or create the below resources yourself.
 
 - Google network, subnetwork and a Cloud NAT
-- A route to the public internet, [see below](#route-to-public-internet)
-- Firewall rule that allows Google Cloud load balancer health checks, [see below](#firewall-lb-health-checks)
 - Service account, [see below](#service-account)
 - Domain, [see below](#dns-record)
 

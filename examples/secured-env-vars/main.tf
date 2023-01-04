@@ -1,10 +1,10 @@
 # As your DNS records might be managed at another registrar's site, we create the DNS record outside of the module.
 # This record is mandatory in order to provision the managed SSL certificate successfully.
 resource "google_dns_record_set" "default" {
-  name         = "${var.domain}."
+  name         = "<your-domain>."
   type         = "A"
   ttl          = 60
-  managed_zone = "example-com"
+  managed_zone = "<your-managed-zone>"
   rrdatas = [
     module.atlantis.ip_address
   ]
@@ -12,22 +12,22 @@ resource "google_dns_record_set" "default" {
 }
 
 module "atlantis" {
-  source     = "../."
+  source     = "../../."
   name       = "atlantis"
-  image      = var.image # Your wrapper Atlantis Docker image
-  network    = var.network
-  subnetwork = var.subnetwork
-  region     = var.region
-  zone       = var.zone
+  image      = "<your-image>" # Your wrapper Atlantis Docker image
+  network    = "<your-network>"
+  subnetwork = "<your-subnetwork>"
+  region     = "<your-region>"
+  zone       = "<your-zone>"
   service_account = {
-    email  = var.service_account_email
+    email  = "<your-service-account-email>"
     scopes = ["cloud-platform"]
   }
   # Declare the non-sensitive environment variables here
   # The sensitive environment variables are set in the Dockerfile!
   env_vars = {
-    ATLANTIS_REPO_ALLOWLIST = "github.com/myorg/*"
-    ATLANTIS_ATLANTIS_URL   = "https://${var.domain}"
+    ATLANTIS_REPO_ALLOWLIST = "github.com/<your-github-handle>/*"
+    ATLANTIS_ATLANTIS_URL   = "https://<your-domain>"
   }
-  domain = var.domain
+  domain = "<your-domain>"
 }
