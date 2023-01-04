@@ -3,6 +3,11 @@ variable "name" {
   description = "Custom name that's used during resource creation"
 }
 
+variable "network" {
+  type        = string
+  description = "Name of the network"
+}
+
 variable "subnetwork" {
   type        = string
   description = "Name of the subnetwork to attach a network interface to"

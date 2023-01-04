@@ -91,6 +91,8 @@ resource "google_compute_instance_template" "atlantis" {
     scopes = var.service_account.scopes
   }
 
+  project = var.project
+
   // Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
   // In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
@@ -186,6 +188,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
     max_unavailable_fixed          = 5
     replacement_method             = "RECREATE"
   }
+  project = var.project
 }
 
 resource "google_compute_global_address" "atlantis" {
@@ -218,11 +221,13 @@ resource "google_compute_backend_service" "atlantis" {
     max_utilization = 0.8
     group           = google_compute_instance_group_manager.atlantis.instance_group
   }
+  project = var.project
 }
 
 resource "google_compute_url_map" "atlantis" {
   name            = var.name
   default_service = google_compute_backend_service.atlantis.id
+  project         = var.project
 }
 
 resource "google_compute_target_https_proxy" "atlantis" {
@@ -231,6 +236,7 @@ resource "google_compute_target_https_proxy" "atlantis" {
   ssl_certificates = [
     google_compute_managed_ssl_certificate.atlantis.id,
   ]
+  project = var.project
 }
 
 resource "google_compute_global_forwarding_rule" "https" {
@@ -239,4 +245,32 @@ resource "google_compute_global_forwarding_rule" "https" {
   port_range            = "443"
   ip_address            = google_compute_global_address.atlantis.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
+  project               = var.project
+}
+
+# Route public internet traffic to the default internet gateway
+resource "google_compute_route" "public_internet" {
+  network          = var.network
+  name             = "${var.name}-public-internet"
+  description      = "Custom static route for Altantis to communicate with the public internet"
+  dest_range       = "0.0.0.0/0"
+  next_hop_gateway = "default-internet-gateway"
+  priority         = 0
+  tags             = ["atlantis"]
+  project          = var.project
+}
+
+# This firewall rule allows Google Cloud to issue the health checks
+resource "google_compute_firewall" "atlantis_lb_health_check" {
+  name        = "${var.name}-lb-health-checks"
+  description = "Firewall rule to allow inbound Google Load Balancer health checks to the Atlantis instance"
+  network     = var.network
+  allow {
+    protocol = "tcp"
+    ports    = [local.atlantis_port]
+  }
+  # These are the source IP ranges for health checks (managed by Google Cloud)
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
+  target_tags   = ["atlantis"]
+  project       = var.project
 }
