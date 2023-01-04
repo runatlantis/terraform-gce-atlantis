@@ -15,8 +15,10 @@ module "atlantis" {
   source     = "../."
   name       = "atlantis"
   image      = var.image # Your wrapper Atlantis Docker image
+  network    = var.network
   subnetwork = var.subnetwork
   region     = var.region
+  zone       = var.zone
   service_account = {
     email  = var.service_account_email
     scopes = ["cloud-platform"]

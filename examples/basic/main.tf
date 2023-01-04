@@ -14,8 +14,10 @@ resource "google_dns_record_set" "default" {
 module "atlantis" {
   source     = "../."
   name       = "atlantis"
+  network    = var.network
   subnetwork = var.subnetwork
   region     = var.region
+  zone       = var.zone
   service_account = {
     email  = var.service_account.email
     scopes = ["cloud-platform"]
