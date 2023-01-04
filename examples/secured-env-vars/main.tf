@@ -24,8 +24,8 @@ module "atlantis" {
   # Declare the non-sensitive environment variables here
   # The sensitive environment variables are set in the Dockerfile!
   env_vars = {
-    ATLANTIS_REPO_ALLOWLIST   = "github.com/myorg/*"
-    ATLANTIS_ATLANTIS_URL     = "https://${var.domain}"
+    ATLANTIS_REPO_ALLOWLIST = "github.com/myorg/*"
+    ATLANTIS_ATLANTIS_URL   = "https://${var.domain}"
   }
   domain = var.domain
 }

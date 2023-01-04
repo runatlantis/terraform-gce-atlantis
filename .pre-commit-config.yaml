@@ -3,9 +3,11 @@ repos:
     rev: v1.74.1
     hooks:
       - id: terraform_fmt
+        exclude: ^example/
       - id: terraform_validate
         exclude: ^example/
       - id: terraform_docs
+        exclude: ^example/
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:

@@ -1,27 +1,25 @@
 # Securing sensitive environment variables
 
-This example only explains how you can protect your environment variables, see the [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) for additional context on deploying this Atlantis module.
+This guide explains how to secure environment variables when using the Atlantis module on Google Cloud Platform. For more information on using this module, see the [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic).
 
 ## Prerequisites
 
-It's expected that you own the below resources already:
+You should already have the following resources:
 
-- Artifact or Container Registry in Google Cloud.
-- CI/CD system that has a secret manager integration (GitHub, Gitlab, Jenkins, Cloud Build, etc).
+- An Artifact or Container Registry in Google Cloud.
+- A CI/CD system with a secret manager integration (such as GitHub, Gitlab, Jenkins, or Cloud Build).
 
 ## How to deploy
 
-See [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/Dockerfile) and the [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/main.tf).
+To deploy the Atlantis module, see [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/Dockerfile) and the [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/main.tf).
 
 ## Configuring Atlantis
 
-Atlantis offers the ability to configure everything through environment variables.
-
-Unfortunately environment variables are shown in the Google Cloud console when deploying a container, as these might contain sensitive values we should protect them.
+Atlantis allows you to configure everything using environment variables. However, these variables may contain sensitive values, and are therefore visible in the Google Cloud console when deploying a container. To protect these values, follow the steps below.
 
 ### Setting sensitive environment variables
 
-Environment variables that contain sensitive values should be set through a wrapper Atlantis Docker image, see the below detailed examples. 
+Use a wrapper Atlantis Docker image to set environment variables that contain sensitive values. See the following examples for more details:
 
 - [**Cloud Build**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/cloudbuild.yaml)
 - [**GitHub Actions**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/.github/workflows/docker-gcp-secrets.yaml)
@@ -29,7 +27,7 @@ Environment variables that contain sensitive values should be set through a wrap
 
 ### Setting non-sensitive environment variables
 
-The module exposes a variable: `var.env_vars` where you should only pass any **non-sensitive** environment variables.
+Use the `var.env_vars` variable to set non-sensitive environment variables.
 
 ```hcl
 env_vars = {
@@ -37,4 +35,4 @@ env_vars = {
 }
 ```
 
-> **Important**: Do **not** specifiy the same environment variable in both the `env_vars` as well as the Dockerfile, this will fail the deployment.
+> **Important**: Do **not** specify the same environment variable in both the env_vars and the Dockerfile, as this will cause the deployment to fail.
