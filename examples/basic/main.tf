@@ -1,3 +1,21 @@
+# Create a service account and attach the required Cloud Logging permissions to it.
+resource "google_service_account" "atlantis" {
+  account_id   = "atlantis"
+  display_name = "Service Account for Atlantis"
+}
+
+resource "google_project_iam_member" "atlantis_log_writer" {
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.atlantis.email}"
+  project = "<your-project-id>"
+}
+
+resource "google_project_iam_member" "atlantis_metric_writer" {
+  role    = "roles/monitoring.metricWriter"
+  member  = "serviceAccount:${google_service_account.atlantis.email}"
+  project = "<your-project-id>"
+}
+
 # As your DNS records might be managed at another registrar's site, we create the DNS record outside of the module.
 # This record is mandatory in order to provision the managed SSL certificate successfully.
 resource "google_dns_record_set" "default" {
@@ -8,7 +26,7 @@ resource "google_dns_record_set" "default" {
   rrdatas = [
     module.atlantis.ip_address
   ]
-  project = var.project_id
+  project = "<your-project-id>"
 }
 
 module "atlantis" {
