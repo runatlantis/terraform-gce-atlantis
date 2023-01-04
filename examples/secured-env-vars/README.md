@@ -11,7 +11,7 @@ It's expected that you own the below resources already:
 
 ## How to deploy
 
-See [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/Dockerfile), [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/server-atlantis.yaml).
+See [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/Dockerfile) and the [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/main.tf).
 
 ## Configuring Atlantis
 
