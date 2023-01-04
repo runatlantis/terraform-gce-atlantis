@@ -21,7 +21,7 @@ Unfortunately environment variables are shown in the Google Cloud console when d
 
 ### Setting sensitive environment variables
 
-We should pass only the **sensitive** environment variables through a wrapper Atlantis Docker image, see the below detailed examples.
+Environment variables that contain sensitive values should be set through a wrapper Atlantis Docker image, see the below detailed examples. 
 
 - [**Cloud Build**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/cloudbuild.yaml)
 - [**GitHub Actions**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/.github/workflows/docker-gcp-secrets.yaml)
