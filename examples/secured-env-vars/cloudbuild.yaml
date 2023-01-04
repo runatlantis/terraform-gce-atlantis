@@ -13,6 +13,9 @@ steps:
     dir: "."
     secretEnv:
       ["ATLANTIS_GH_USER", "ATLANTIS_GH_TOKEN", "ATLANTIS_GH_WEBHOOK_SECRET"]
+
+
+# Give the Cloud Build Service Agent service account the `secretmanager.secretAccessor` role so Cloud Build can pull secrets
 availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/atlantis-gh-user/versions/latest
