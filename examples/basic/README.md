@@ -6,9 +6,11 @@ Read through the below before you deploy this module.
 
 This module expects that you already own or create the below resources yourself.
 
-- Google network and subnetwork
+- Google network, subnetwork and a Cloud NAT
 - Domain [see below](#dns-record)
 - Service account [see below](#service-account)
+
+If you would like a complete example including the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
 
 ## How to deploy
 

@@ -1,15 +1,9 @@
 locals {
-  zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[0]
   // The default port that Atlantis runs on is 4141.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
   // Atlantis its home directory is "/home/atlantis".
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
   port_name         = "atlantis"
-}
-
-data "google_compute_zones" "available" {
-  status = "UP"
-  region = var.region
 }
 
 data "google_compute_image" "cos" {
@@ -160,7 +154,7 @@ resource "google_compute_health_check" "atlantis" {
 resource "google_compute_instance_group_manager" "atlantis" {
   name               = var.name
   base_instance_name = var.name
-  zone               = local.zone
+  zone               = var.zone
   description        = "Instance group manager responsible for managing the VM running Atlantis in a containerized environment using Docker"
 
   version {

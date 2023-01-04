@@ -16,7 +16,6 @@ variable "region" {
 variable "zone" {
   type        = string
   description = "The zone that instances should be created in"
-  default     = null
 }
 
 variable "machine_type" {
@@ -75,4 +74,10 @@ variable "block_project_ssh_keys" {
   type        = bool
   description = "Blocks the use of project-wide publich SSH keys"
   default     = false
+}
+
+variable "project" {
+  type        = string
+  description = "The ID of the project in which the resource belongs."
+  default     = null
 }
