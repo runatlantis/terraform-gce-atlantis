@@ -1,38 +1,61 @@
 # Securing sensitive environment variables
 
-This guide explains how to secure environment variables when using the Atlantis module on Google Cloud Platform. For more information on using this module, see the [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic).
+This guide explains how to secure environment variables when using the Atlantis module on Google Cloud Platform. For more information on using this module, see the [`basic example`](../basic/README.md).
 
-## Prerequisites
+## build your own image
+To retrieve sensitive values from the Google Secret manager you need to:
 
-You should already have the following resources:
+- enable artifact registry in your Google Cloud Project
+- build your own image using the [gcp-get-secret](https://github.com/binxio/gcp-get-secret) as entrypoint
+- store your secrets in Google Secret Manager.
+- set variable values to point to the secret manager secret URL
 
-- An Artifact or Container Registry in Google Cloud.
-- A CI/CD system with a secret manager integration (such as GitHub, Gitlab, Jenkins, or Cloud Build).
+## Enable artifact registry
+To enable artifact registry, type:
 
-## How to deploy
+```shell
+gcloud services enable artifactregistry.googleapis.com
 
-To deploy the Atlantis module, see [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/Dockerfile) and the [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/main.tf).
+gcloud artifacts repositories \
+  create atlantis \
+  --repository-format=docker \
+  --location=europe \
+  --description="Atlantis gcp-get-secret"
+```
 
-## Configuring Atlantis
+## build the image
+The build the atlantis image, type the following commands:
 
-Atlantis allows you to configure everything using environment variables. However, these variables may contain sensitive values, and are therefore visible in the Google Cloud console when deploying a container. To protect these values, follow the steps below.
+```shell
+REPOSITORY=europe-docker.pkg.dev/$(gcloud config get-value project)/atlantis:latest
+docker build -t $REPOSITORY -f Dockerfile .
+docker push $REPOSITORY
+echo "INFO: set the terraform variable image to \"$REPOSITORY\"" >&2
+```
 
-### Setting sensitive environment variables
+## Store the secrets in Google Secret Manager
+Add the secrets into the secret manager, using the following script:
 
-Use a wrapper Atlantis Docker image to set environment variables that contain sensitive values. See the following examples for more details:
+```bash
+for SECRET in ATLANTIS_GH_USER ATLANTIS_GH_TOKEN ATLANTIS_GH_WEBHOOK_SECRET; do
+    NAME=$(sed -e 's/_/-/g' | tr '[:upper:]' '[:lower:]')
+    
+    read "Value for $SECRET:" VALUE
+    gcloud secrets create $NAME
+    gcloud secrets versions add --secret $NAME --datafile <(echo -n "$VALUE")
+    echo "INFO: stored $SECRET as $NAME" >&2
+done    
+```
 
-- [**Cloud Build**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/cloudbuild.yaml)
-- [**GitHub Actions**: pull secrets from Google Secret Manager](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/.github/workflows/docker-gcp-secrets.yaml)
-- [**GitHub Actions**: use GitHub secrets](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars/.github/workflows/docker-github-secrets.yaml)
-
-### Setting non-sensitive environment variables
-
+## set variable values to point to the secret manager secret URL
 Use the `var.env_vars` variable to set non-sensitive environment variables.
 
 ```hcl
 env_vars = {
-  ATLANTIS_EXAMPLE = "example"
+  ATLANTIS_GH_USER = "gcp:///atlantis-gh-user"
+  ATLANTIS_GH_TOKEN = "gcp:///atlantis-gh-token"
+  ATLANTIS_GH_WEBHOOK_SECRET = "gcp:///atlantis-gh-webhook-secret"
+  ... other ...
 }
 ```
-
-> **Important**: Do **not** specify the same environment variable in both the env_vars and the Dockerfile, as this will cause the deployment to fail.
+This will retrieve the value for the environments variables from the Google Secret Manager on startup of Atlantis.

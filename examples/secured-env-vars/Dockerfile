@@ -1,9 +1,12 @@
+FROM binxio/gcp-get-secret:latest
+
 FROM ghcr.io/runatlantis/atlantis:latest
+COPY --from=0 /gcp-get-secret /usr/local/bin/
 
-ARG ATLANTIS_GH_USER
-ARG ATLANTIS_GH_TOKEN
-ARG ATLANTIS_GH_WEBHOOK_SECRET
 
-ENV ATLANTIS_GH_USER $ATLANTIS_GH_USER
-ENV ATLANTIS_GH_TOKEN $ATLANTIS_GH_TOKEN
-ENV ATLANTIS_GH_WEBHOOK_SECRET $ATLANTIS_GH_WEBHOOK_SECRET
+# gcp-get-secret will replace the environment variables values
+# with the value in the Google Secret Manager secret before exec'ing
+# the atlantis entrypoint.
+#
+# See https://github.com/binxio/gcp-get-secret
+ENTRYPOINT ["/usr/local/bin/gcp-get-secret", "docker-entrypoint.sh"]
