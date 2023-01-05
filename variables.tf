@@ -35,7 +35,7 @@ variable "persistent_disk_size_gb" {
   default     = 50
 }
 
-variable "use_spot_machine" {
+variable "spot_machine_enabled" {
   type        = bool
   description = "A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed"
   default     = false
@@ -75,7 +75,7 @@ variable "domain" {
   description = "Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://`"
 }
 
-variable "block_project_ssh_keys" {
+variable "block_project_ssh_keys_enabled" {
   type        = bool
   description = "Blocks the use of project-wide publich SSH keys"
   default     = false
