@@ -44,7 +44,7 @@ For an overview of all possible environment variables, see: [Atlantis Server Con
 
 ### Setting sensitive environment variables
 
-See [secured environment variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secured-env-vars) for an example on how to deal with sensitive values in environment variables.
+See [secured environment variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars) for an example on how to deal with sensitive values in environment variables.
 
 ## Service Account
 
