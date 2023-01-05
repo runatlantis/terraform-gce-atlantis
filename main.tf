@@ -19,13 +19,7 @@ resource "google_compute_instance_template" "atlantis" {
 
   tags = ["atlantis"]
 
-  metadata_startup_script = templatefile(
-    "${path.module}/startup-script.sh",
-    {
-      disk_name     = "atlantis-disk-0",
-      atlantis_port = local.atlantis_port,
-    }
-  )
+  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
