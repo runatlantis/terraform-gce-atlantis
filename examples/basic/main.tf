@@ -45,7 +45,7 @@ module "atlantis" {
     scopes = ["cloud-platform"]
   }
   # Note: environment variables are shown in the Google Cloud UI
-  # See the `examples/secured-env-vars` if you want to protect sensitive information
+  # See the `examples/secure-env-vars` if you want to protect sensitive information
   env_vars = {
     ATLANTIS_GH_USER           = local.github_user
     ATLANTIS_GH_TOKEN          = local.github_token

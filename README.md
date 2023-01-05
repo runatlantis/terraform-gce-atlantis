@@ -5,7 +5,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 - [Example Usage](#example-usage)
     - [Basic](examples/basic)
     - [Complete](examples/complete)
-    - [Secured Environment Variables](examples/secured-env-vars)
+    - [Secured Environment Variables](examples/secure-env-vars)
 - [Feature highlights](#feature-highlights)
 - [FAQ](#faq)
 - [Requirements](#requirements)
