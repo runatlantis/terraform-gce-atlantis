@@ -34,7 +34,7 @@ See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/m
 
 It may take up to three minutes for the Managed Instance Group to safely shut down and recreate the VM before it is considered healthy again.
 
-### Even though the apply function worked correctly, I am receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
+### Even though terraform apply worked correctly, I am receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
 
 This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned. 
 If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned. 

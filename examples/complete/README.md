@@ -4,7 +4,7 @@ Read through the below before you deploy this module.
 
 - [Prerequisites](#prerequisites)
 - [How to deploy](#how-to-deploy)
-  - [Note](#note)
+  - [Notes](#notes)
 - [Configuring Atlantis](#configuring-atlantis)
   - [Setting sensitive environment variables](#setting-sensitive-environment-variables)
 - [Service Account](#service-account)
@@ -22,9 +22,11 @@ This module expects that you already own or create the below resources yourself.
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/server-atlantis.yaml).
 
-### Note
+### Notes
 
-The resources in [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) are configured with the least amount of attributes possible to make it work. You likely want to set additional attributes if you bring this to production.
+- The [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) contains resources that are set up with only the minimum required attributes to function properly. It is recommended to add additional attributes if you plan to use this in a production environment.
+
+- Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
 
 ## Configuring Atlantis
 
