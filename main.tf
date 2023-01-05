@@ -84,7 +84,8 @@ resource "google_compute_instance_template" "atlantis" {
   }
 
   network_interface {
-    subnetwork = var.subnetwork
+    subnetwork         = var.subnetwork
+    subnetwork_project = var.project
   }
 
   shielded_instance_config {
