@@ -30,7 +30,7 @@ resource "google_compute_instance_template" "atlantis" {
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
     "google-logging-enabled"    = true
-    "block-project-ssh-keys"    = var.block_project_ssh_keys
+    "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
   }
 
   labels = {
@@ -44,11 +44,11 @@ resource "google_compute_instance_template" "atlantis" {
   // Using the below scheduling configuration,
   // the managed instance group will recreate the Spot VM if Compute Engine stops them
   scheduling {
-    automatic_restart           = var.use_spot_machine ? false : true
-    preemptible                 = var.use_spot_machine ? true : false
-    provisioning_model          = var.use_spot_machine ? "SPOT" : "STANDARD"
-    on_host_maintenance         = var.use_spot_machine ? "TERMINATE" : "MIGRATE"
-    instance_termination_action = var.use_spot_machine ? "STOP" : null
+    automatic_restart           = var.spot_machine_enabled ? false : true
+    preemptible                 = var.spot_machine_enabled ? true : false
+    provisioning_model          = var.spot_machine_enabled ? "SPOT" : "STANDARD"
+    on_host_maintenance         = var.spot_machine_enabled ? "TERMINATE" : "MIGRATE"
+    instance_termination_action = var.spot_machine_enabled ? "STOP" : null
   }
 
   // Ephemeral OS boot disk
