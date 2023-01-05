@@ -167,6 +167,26 @@ resource "google_compute_health_check" "atlantis_mig" {
   project = var.project
 }
 
+resource "google_compute_firewall" "atlantis" {
+  ## firewall rules enabling the load balancer health checks
+  name    = var.name
+  network = var.network
+
+  description = "allow health checks and load balancers access to Atlantis"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = [local.atlantis_port]
+  }
+
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
+  target_tags   = ["atlantis"]
+}
+
 resource "google_compute_instance_group_manager" "atlantis" {
   name               = var.name
   base_instance_name = var.name
