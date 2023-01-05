@@ -2,7 +2,15 @@
 
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
-## Usage
+- [Example Usage](#example-usage)
+    - [Basic](examples/basic)
+    - [Complete](examples/complete)
+    - [Secured Environment Variables](examples/secured-env-vars)
+- [Feature highlights](#feature-highlights)
+- [FAQ](#faq)
+- [Requirements](#requirements)
+
+## Example Usage
 
 See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) directory.
 
