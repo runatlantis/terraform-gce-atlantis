@@ -99,6 +99,5 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_atlantis"></a> [atlantis](#output\_atlantis) | All of the outputs of the upstream terraform-google-modules/container-vm/google module |
 | <a name="output_ip_address"></a> [ip\_address](#output\_ip\_address) | The IPv4 address of the load balancer |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
