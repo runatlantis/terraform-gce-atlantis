@@ -226,12 +226,13 @@ resource "google_compute_managed_ssl_certificate" "atlantis" {
 }
 
 resource "google_compute_backend_service" "atlantis" {
-  name                  = var.name
-  protocol              = "HTTP"
-  port_name             = local.port_name
-  timeout_sec           = "30"
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-  health_checks         = [google_compute_health_check.atlantis.id]
+  name                            = var.name
+  protocol                        = "HTTP"
+  port_name                       = local.port_name
+  timeout_sec                     = 10
+  connection_draining_timeout_sec = 5
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  health_checks                   = [google_compute_health_check.atlantis.id]
 
   log_config {
     enable = true
