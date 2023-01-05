@@ -19,7 +19,13 @@ resource "google_compute_instance_template" "atlantis" {
 
   tags = ["atlantis"]
 
-  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
+  metadata_startup_script = templatefile(
+    "${path.module}/startup-script.sh",
+    {
+      disk_name     = "atlantis-disk-0",
+      atlantis_port = local.atlantis_port,
+    }
+  )
 
   metadata = {
     "gce-container-declaration" = module.atlantis.metadata_value
@@ -220,12 +226,13 @@ resource "google_compute_managed_ssl_certificate" "atlantis" {
 }
 
 resource "google_compute_backend_service" "atlantis" {
-  name                  = var.name
-  protocol              = "HTTP"
-  port_name             = local.port_name
-  timeout_sec           = "30"
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-  health_checks         = [google_compute_health_check.atlantis.id]
+  name                            = var.name
+  protocol                        = "HTTP"
+  port_name                       = local.port_name
+  timeout_sec                     = 10
+  connection_draining_timeout_sec = 5
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  health_checks                   = [google_compute_health_check.atlantis.id]
 
   log_config {
     enable = true
@@ -286,7 +293,7 @@ resource "google_compute_firewall" "atlantis_lb_health_check" {
     protocol = "tcp"
   }
   # These are the source IP ranges for health checks (managed by Google Cloud)
-  source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
   project       = var.project
   target_tags   = ["atlantis"]
 }
