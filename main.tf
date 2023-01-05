@@ -292,7 +292,7 @@ resource "google_compute_firewall" "atlantis_lb_health_check" {
     protocol = "tcp"
   }
   # These are the source IP ranges for health checks (managed by Google Cloud)
-  source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
   project       = var.project
   target_tags   = ["atlantis"]
 }
