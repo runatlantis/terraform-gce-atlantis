@@ -2,6 +2,11 @@
 
 This guide explains how to secure environment variables when using the Atlantis module on Google Cloud Platform. For more information on using this module, see the [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic).
 
+- [Prerequisites](#prerequisites)
+- [How to deploy](#how-to-deploy)
+- [Setting sensitive environment variables](#setting-sensitive-environment-variables)
+- [Setting non sensitive environment variables](#setting-non-sensitive-environment-variables)
+
 ## Prerequisites
 
 You should already have the following resources:
