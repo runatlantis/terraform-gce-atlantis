@@ -5,7 +5,6 @@ locals {
   region                = "<your-region>"
   zone                  = "<your-zone>"
   image                 = "<your-image>"
-  service_account_email = "<your-service-account-email>"
   domain                = "<example.com>"
   managed_zone          = "<your-managed-zone>"
 
@@ -40,7 +39,7 @@ module "atlantis" {
   region     = local.region
   zone       = local.zone
   service_account = {
-    email  = local.service_account_email
+    email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]
   }
   # Declare the non-sensitive environment variables here

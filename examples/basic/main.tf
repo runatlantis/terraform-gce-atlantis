@@ -4,7 +4,6 @@ locals {
   subnetwork            = "<your-subnetwork>"
   region                = "<your-region>"
   zone                  = "<your-zone>"
-  service_account_email = "<your-service-account-email>"
   domain                = "<example.com>"
   managed_zone          = "<your-managed-zone>"
 
@@ -41,7 +40,7 @@ module "atlantis" {
   region     = local.region
   zone       = local.zone
   service_account = {
-    email  = local.service_account_email
+    email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]
   }
   # Note: environment variables are shown in the Google Cloud UI
