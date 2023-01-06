@@ -1,6 +1,9 @@
 #!/bin/bash
 # shellcheck disable=SC2154
 
+# Exit immediately if a command returns a non-zero code
+set -e
+
 cat > /etc/systemd/system/atlantis-chown-disk.service <<EOF
 [Unit]
 Description=Chown the Atlantis mount
