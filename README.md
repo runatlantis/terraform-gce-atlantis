@@ -96,6 +96,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |
 | <a name="input_spot_machine_enabled"></a> [spot\_machine\_enabled](#input\_spot\_machine\_enabled) | A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed | `bool` | `false` | no |
 | <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | Name of the subnetwork to attach a network interface to | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to attach to the instance running Atlantis. | `list(string)` | `[]` | no |
 | <a name="input_zone"></a> [zone](#input\_zone) | The zone that instances should be created in | `string` | n/a | yes |
 
 ## Outputs
