@@ -62,7 +62,9 @@ See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master
 
 ## DNS Record
 
-As this module creates an External HTTPS Load Balancer together with a managed SSL certificate for the domain you provided, an A record has to be created for your domain to successfully provision the certificate.
+This example uses Cloud DNS to add an A record containing the load balancer IP address. If you don't use Cloud DNS, please add the A record using the load balancer IP address on the platform where you've registered your domain.
+
+It's a requirement to add the A record to the domain record set in order to sucessfully provision the certificate!
 
 ### Example
 
