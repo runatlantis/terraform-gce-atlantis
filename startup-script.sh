@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 
 cat > /etc/systemd/system/atlantis-chown-disk.service <<EOF
 [Unit]
