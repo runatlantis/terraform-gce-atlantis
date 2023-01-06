@@ -22,13 +22,13 @@ resource "google_compute_instance_template" "default" {
   metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
 
   metadata = {
-    "gce-container-declaration" = module.atlantis.metadata_value
+    "gce-container-declaration" = module.container.metadata_value
     "google-logging-enabled"    = true
     "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
   }
 
   labels = {
-    "container-vm" = module.atlantis.vm_container_label
+    "container-vm" = module.container.vm_container_label
   }
 
   instance_description = "VM running Atlantis in a containerized environment using Docker"
@@ -101,7 +101,7 @@ resource "google_compute_instance_template" "default" {
   }
 }
 
-module "atlantis" {
+module "container" {
   source  = "terraform-google-modules/container-vm/google"
   version = "3.1.0"
 
