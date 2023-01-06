@@ -13,6 +13,7 @@ version-resolver:
     - 'patch'
     - 'bug'
     - 'hotfix'
+    - 'enhancement'
     - 'documentation'
   default: 'minor'
 
