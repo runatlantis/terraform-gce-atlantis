@@ -110,7 +110,7 @@ module "atlantis" {
     securityContext = {
       privileged : true
     }
-    tty : true
+    tty = true
     env = [for key, value in var.env_vars : {
       name  = key
       value = value
