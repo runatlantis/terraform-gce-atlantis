@@ -43,7 +43,10 @@ You can check the status of the certificate in the Google Cloud Console.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.47.0 |
 
 ## Providers
 
