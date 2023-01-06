@@ -30,7 +30,7 @@ See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/m
 
 ## FAQ
 
-### My Virtual Machine (VM) experienced an outage and is taking some time to restart
+### My VM experienced an outage and is taking some time to restart
 
 It may take up to three minutes for the Managed Instance Group to safely shut down and recreate the VM before it is considered healthy again.
 
