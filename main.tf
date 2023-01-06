@@ -1,7 +1,7 @@
 locals {
-  // The default port that Atlantis runs on is 4141.
+  # The default port that Atlantis runs on is 4141.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
-  // Atlantis its home directory is "/home/atlantis".
+  # Atlantis its home directory is "/home/atlantis".
   atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
   port_name         = "atlantis"
 }
@@ -35,8 +35,8 @@ resource "google_compute_instance_template" "atlantis" {
   machine_type         = var.machine_type
   can_ip_forward       = false
 
-  // Using the below scheduling configuration,
-  // the managed instance group will recreate the Spot VM if Compute Engine stops them
+  # Using the below scheduling configuration,
+  # the managed instance group will recreate the Spot VM if Compute Engine stops them
   scheduling {
     automatic_restart           = var.spot_machine_enabled ? false : true
     preemptible                 = var.spot_machine_enabled ? true : false
@@ -45,7 +45,7 @@ resource "google_compute_instance_template" "atlantis" {
     instance_termination_action = var.spot_machine_enabled ? "STOP" : null
   }
 
-  // Ephemeral OS boot disk
+  # Ephemeral OS boot disk
   disk {
     source_image = data.google_compute_image.cos.self_link
     auto_delete  = true
@@ -61,7 +61,7 @@ resource "google_compute_instance_template" "atlantis" {
     }
   }
 
-  // Persistent disk for Atlantis
+  #  Persistent disk for Atlantis
   disk {
     device_name  = "atlantis-disk-0"
     disk_type    = "pd-ssd"
@@ -94,8 +94,8 @@ resource "google_compute_instance_template" "atlantis" {
 
   project = var.project
 
-  // Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
-  // In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
+  # Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
+  # In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
     create_before_destroy = true
   }
@@ -108,9 +108,9 @@ module "atlantis" {
   container = {
     image = var.image
     securityContext = {
-      privileged : true
+      privileged = true
     }
-    tty : true
+    tty = true
     env = [for key, value in var.env_vars : {
       name  = key
       value = value
