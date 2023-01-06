@@ -17,7 +17,7 @@ resource "google_compute_instance_template" "atlantis" {
   description = "This template is used to create VMs that run Atlantis in a containerized environment using Docker"
   region      = var.region
 
-  tags = ["atlantis"]
+  tags = concat(["atlantis"], var.tags)
 
   metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
 

@@ -81,6 +81,12 @@ variable "block_project_ssh_keys_enabled" {
   default     = false
 }
 
+variable "tags" {
+  type        = list(string)
+  description = "Tags to attach to the instance running Atlantis."
+  default     = []
+}
+
 variable "project" {
   type        = string
   description = "The ID of the project in which the resource belongs."
