@@ -8,16 +8,14 @@ version-resolver:
   minor:
     labels:
     - 'minor'
-    - 'enhancement'
   patch:
     labels:
-    - 'auto-update'
     - 'patch'
-    - 'fix'
-    - 'bugfix'
     - 'bug'
     - 'hotfix'
-  default: 'minor'
+    - 'enhancement'
+    - 'documentation'
+  default: 'patch'
 
 categories:
 - title: '🚀 Enhancements'
@@ -26,13 +24,8 @@ categories:
   - 'patch'
 - title: '🐛 Bug Fixes'
   labels:
-  - 'fix'
-  - 'bugfix'
   - 'bug'
   - 'hotfix'
-- title: '🤖 Automatic Updates'
-  labels:
-  - 'auto-update'
 
 change-template: |
   <details>
