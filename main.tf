@@ -103,7 +103,6 @@ resource "google_compute_instance_template" "atlantis" {
 
 module "atlantis" {
   source  = "terraform-google-modules/container-vm/google"
-  version = "~> 2.0"
 
   container = {
     image = var.image
