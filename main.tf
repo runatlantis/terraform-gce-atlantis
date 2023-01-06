@@ -11,7 +11,7 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
-resource "google_compute_instance_template" "atlantis" {
+resource "google_compute_instance_template" "default" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix = "${var.name}-"
   description = "This template is used to create VMs that run Atlantis in a containerized environment using Docker"
@@ -141,7 +141,7 @@ module "atlantis" {
   restart_policy = "Always"
 }
 
-resource "google_compute_health_check" "atlantis" {
+resource "google_compute_health_check" "default" {
   name                = var.name
   check_interval_sec  = 1
   timeout_sec         = 1
@@ -155,7 +155,7 @@ resource "google_compute_health_check" "atlantis" {
   project = var.project
 }
 
-resource "google_compute_health_check" "atlantis_mig" {
+resource "google_compute_health_check" "default_instance_group_manager" {
   name                = "${var.name}-mig"
   healthy_threshold   = 1
   unhealthy_threshold = 10
@@ -168,14 +168,14 @@ resource "google_compute_health_check" "atlantis_mig" {
   project = var.project
 }
 
-resource "google_compute_instance_group_manager" "atlantis" {
+resource "google_compute_instance_group_manager" "default" {
   name               = var.name
   base_instance_name = var.name
   zone               = var.zone
   description        = "Instance group manager responsible for managing the VM running Atlantis in a containerized environment using Docker"
 
   version {
-    instance_template = google_compute_instance_template.atlantis.id
+    instance_template = google_compute_instance_template.default.id
   }
 
 
@@ -190,7 +190,7 @@ resource "google_compute_instance_group_manager" "atlantis" {
   }
 
   auto_healing_policies {
-    health_check      = google_compute_health_check.atlantis_mig.id
+    health_check      = google_compute_health_check.default_instance_group_manager.id
     initial_delay_sec = 30
   }
 
@@ -207,12 +207,12 @@ resource "google_compute_instance_group_manager" "atlantis" {
   project = var.project
 }
 
-resource "google_compute_global_address" "atlantis" {
+resource "google_compute_global_address" "default" {
   name    = var.name
   project = var.project
 }
 
-resource "google_compute_managed_ssl_certificate" "atlantis" {
+resource "google_compute_managed_ssl_certificate" "default" {
   name = var.name
   managed {
     domains = ["${var.domain}"]
@@ -220,14 +220,14 @@ resource "google_compute_managed_ssl_certificate" "atlantis" {
   project = var.project
 }
 
-resource "google_compute_backend_service" "atlantis" {
+resource "google_compute_backend_service" "default" {
   name                            = var.name
   protocol                        = "HTTP"
   port_name                       = local.port_name
   timeout_sec                     = 10
   connection_draining_timeout_sec = 5
   load_balancing_scheme           = "EXTERNAL_MANAGED"
-  health_checks                   = [google_compute_health_check.atlantis.id]
+  health_checks                   = [google_compute_health_check.default.id]
 
   log_config {
     enable = true
@@ -236,31 +236,31 @@ resource "google_compute_backend_service" "atlantis" {
   backend {
     balancing_mode  = "UTILIZATION"
     max_utilization = 0.8
-    group           = google_compute_instance_group_manager.atlantis.instance_group
+    group           = google_compute_instance_group_manager.default.instance_group
   }
   project = var.project
 }
 
-resource "google_compute_url_map" "atlantis" {
+resource "google_compute_url_map" "default" {
   name            = var.name
-  default_service = google_compute_backend_service.atlantis.id
+  default_service = google_compute_backend_service.default.id
   project         = var.project
 }
 
-resource "google_compute_target_https_proxy" "atlantis" {
+resource "google_compute_target_https_proxy" "default" {
   name    = var.name
-  url_map = google_compute_url_map.atlantis.id
+  url_map = google_compute_url_map.default.id
   ssl_certificates = [
-    google_compute_managed_ssl_certificate.atlantis.id,
+    google_compute_managed_ssl_certificate.default.id,
   ]
   project = var.project
 }
 
 resource "google_compute_global_forwarding_rule" "https" {
   name                  = var.name
-  target                = google_compute_target_https_proxy.atlantis.id
+  target                = google_compute_target_https_proxy.default.id
   port_range            = "443"
-  ip_address            = google_compute_global_address.atlantis.address
+  ip_address            = google_compute_global_address.default.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
   project               = var.project
 }
@@ -278,7 +278,7 @@ resource "google_compute_route" "public_internet" {
 }
 
 # This firewall rule allows Google Cloud to issue the health checks
-resource "google_compute_firewall" "atlantis_lb_health_check" {
+resource "google_compute_firewall" "lb_health_check" {
   name        = "${var.name}-lb-health-checks"
   description = "Firewall rule to allow inbound Google Load Balancer health checks to the Atlantis instance"
   priority    = 0
