@@ -108,7 +108,7 @@ module "atlantis" {
   container = {
     image = var.image
     securityContext = {
-      privileged : true
+      privileged = true
     }
     tty = true
     env = [for key, value in var.env_vars : {
