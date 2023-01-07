@@ -103,8 +103,6 @@ resource "google_compute_instance_template" "default" {
 
   tags = concat(["atlantis"], var.tags)
 
-  metadata_startup_script = null
-
   metadata = {
     "gce-container-declaration" = module.container.metadata_value
     "user-data"                 = data.cloudinit_config.config.rendered
