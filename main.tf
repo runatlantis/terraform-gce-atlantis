@@ -11,7 +11,7 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
-data "template_cloudinit_config" "config" {
+data "cloudinit_config" "config" {
   gzip          = false
   base64_encode = false
 
@@ -107,7 +107,7 @@ resource "google_compute_instance_template" "default" {
 
   metadata = {
     "gce-container-declaration" = module.container.metadata_value
-    "user-data"                 = data.template_cloudinit_config.config.rendered
+    "user-data"                 = data.cloudinit_config.config.rendered
     "google-logging-enabled"    = true
     "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
   }
