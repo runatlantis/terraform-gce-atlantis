@@ -55,7 +55,7 @@ variable "disk_kms_key_self_link" {
 
 variable "image" {
   type        = string
-  description = "Docker image. This is most often a reference to a container located in a container registry."
+  description = "Docker image. This is most often a reference to a container located in a container registry"
   default     = "ghcr.io/runatlantis/atlantis:latest"
 }
 
