@@ -4,7 +4,7 @@ This guide explains how to secure environment variables when using the Atlantis 
 
 - [Prerequisites](#prerequisites)
 - [How to deploy](#how-to-deploy)
-  - [Notes](#notes)
+  - [Important](#Important)
 - [Setting sensitive environment variables](#setting-sensitive-environment-variables)
 - [Setting non sensitive environment variables](#setting-non-sensitive-environment-variables)
 
@@ -22,6 +22,8 @@ To deploy the Atlantis module, see [`Dockerfile`](https://github.com/bschaatsber
 ### Notes
 
 - Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
+
+- If you bring your own Docker image, be sure to create an Atlantis user using a uid (user ID) of 100.
 
 ## Configuring Atlantis
 

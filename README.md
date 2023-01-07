@@ -2,17 +2,14 @@
 
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
+- [Feature highlights](#feature-highlights)
+- [Prerequisites](#prerequisites)
 - [Example Usage](#example-usage)
   - [Basic](examples/basic)
   - [Complete](examples/complete)
   - [Secured Environment Variables](examples/secure-env-vars)
-- [Feature highlights](#feature-highlights)
 - [FAQ](#faq)
 - [Requirements](#requirements)
-
-## Example Usage
-
-See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) directory.
 
 ## Feature highlights
 
@@ -29,6 +26,20 @@ See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/m
 - **Separate Persistent Data Disk** - The VM instance has a separate attached persistent data disk attached to it to ensure that Atlantis data is persisted and not lost if the VM is deleted or terminated.
 
 - **Shielded VM** - A Shielded VM is a VM that's hardened by a set of security controls that help defend against rootkits and bootkits. Using a Shielded VM helps protect enterprise workloads from threats like remote attacks, privilege escalation, and malicious insiders.
+
+## Prerequisites
+
+This module expects that you already own or create the below resources yourself.
+
+- Google network, subnetwork and a Cloud NAT
+- Service account
+- Domain
+
+If you prefer an example that includes the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
+
+## Example Usage
+
+See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) directory.
 
 ## FAQ
 

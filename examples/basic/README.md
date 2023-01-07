@@ -4,7 +4,7 @@ Read through the below before you deploy this module.
 
 - [Prerequisites](#prerequisites)
 - [How to deploy](#how-to-deploy)
-  - [Notes](#notes)
+  - [Important](#important)
 - [Configuring Atlantis](#configuring-atlantis)
   - [Setting sensitive environment variables](#setting-sensitive-environment-variables)
 - [Service Account](#service-account)
@@ -26,9 +26,11 @@ If you prefer an example that includes the above resources, see [`complete examp
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
 
-### Notes
+### Important
 
 - Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
+
+- If you bring your own Docker image, be sure to create an Atlantis user using a uid (user ID) of 100.
 
 ## Configuring Atlantis
 
