@@ -74,20 +74,13 @@ See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master
 
 ## Identity-Aware Proxy
 
-The Atlantis UI can be secured using Google Cloud's Identity-Aware Proxy (IAP) service, which authenticates users with Google Accounts.
+Google Cloud's Identity-Aware Proxy (IAP) is a service that can be used to secure the Atlantis UI by authenticating users with Google Accounts
 
 ### Enabling IAP
 
-Protecting Atlantis using Identity-Aware Proxy is very simple.
+To enable IAP, you will need to configure the OAuth Consent Screen and create OAuth credentials, as described in the [Enabling IAP](https://cloud.google.com/iap/docs/enabling-compute-howto#enabling_iap_console) guide.
 
-Before you begin:
-
-- Configure the OAuth Consent Screen
-- Create OAuth credentials
-
-See [Enabling IAP](https://cloud.google.com/iap/docs/enabling-compute-howto#enabling_iap_console) on how to do this.
-
-Once you have the OAuth credentials. you simply have to set the `iap` variable.
+ Once you have the OAuth credentials, you can set the `iap` variable to use them.
 
 ```hcl
 iap = {
@@ -98,13 +91,11 @@ iap = {
 
 ### What's exactly protected?
 
-When `iap` is set, a secondary IAP protected backend is created to handle all requests except those made to the `/events` path. The `/events` path is used to set up webhooks between platforms such as GitHub, BitBucket, and Atlantis.
-
-In short, everything is protected by IAP besides the `/events` path.
+With IAP enabled, all requests to Atlantis will be protected, except for those made to the `/events` path, which is used for webhooks between platforms such as GitHub and BitBucket.
 
 ### Permissions
 
-To grant a user access to your IAP protected Atlantis deployment, ensure that the principal (Google Account user) has the `roles/iap.httpsResourceAccessor` role attached to it.
+To grant a user access to your IAP-protected Atlantis deployment, you will need to give them the `roles/iap.httpsResourceAccessor` role.
 
 ```hcl
 resource "google_iap_web_iam_member" "member" {
