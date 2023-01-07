@@ -19,3 +19,7 @@ See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master
 ### Important
 
 - The [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) contains resources that are set up with only the minimum required attributes to function properly. It is recommended to add additional attributes if you plan to use this in a production environment.
+
+## After it's successfully deployed
+
+Once you're done, see [Configuring Webhooks for Atlantis](https://www.runatlantis.io/docs/configuring-webhooks.html#configuring-webhooks)

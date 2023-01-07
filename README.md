@@ -10,6 +10,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
   - [Secured Environment Variables](examples/secure-env-vars)
 - [How to deploy](#how-to-deploy)
   - [Important](#important)
+  - [After it's successfully deployed](#after-its-successfully-deployed)
 - [Configuring Atlantis](#configuring-atlantis)
   - [Setting sensitive environment variables](#setting-sensitive-environment-variables)
 - [Service Account](#service-account)
@@ -62,6 +63,10 @@ See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master
 - Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
 
 - If you bring your own Docker image (*not using any Atlantis image as base image*), be sure to create an Atlantis user using a uid (user ID) of 100.
+
+### After it's successfully deployed
+
+Once you're done, see [Configuring Webhooks for Atlantis](https://www.runatlantis.io/docs/configuring-webhooks.html#configuring-webhooks)
 
 ## Configuring Atlantis
 

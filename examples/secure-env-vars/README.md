@@ -46,3 +46,7 @@ env_vars = {
 ```
 
 > **Important**: Do **not** specify the same environment variable in both the env_vars and the Dockerfile, as this might cause the deployment to fail.
+
+## After it's successfully deployed
+
+Once you're done, see [Configuring Webhooks for Atlantis](https://www.runatlantis.io/docs/configuring-webhooks.html#configuring-webhooks)
