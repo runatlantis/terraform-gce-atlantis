@@ -79,10 +79,6 @@ module "atlantis" {
     email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]
   }
-  iap = {
-    oauth2_client_id    = "529355185235-bKjfgMRRY6jC4IkX4KPm7UplFJoSkfHD.apps.googleusercontent.com"
-    auth2_client_secret = "GOCtUd-PjhzJCBj4jafoBIqWnXvFShF6c1r"
-  }
   # Note: environment variables are shown in the Google Cloud UI
   # See the `examples/secure-env-vars` if you want to protect sensitive information
   env_vars = {

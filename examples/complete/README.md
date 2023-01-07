@@ -11,6 +11,8 @@ Read through the below before you deploy this module.
   - [Permissions](#permissions)
 - [DNS Record](#dns-record)
   - [Example](#example)
+- [Identity-Aware Proxy](#identity-aware-proxy)
+  - [Permissions](#permissions)
 
 ## Prerequisites
 
@@ -69,3 +71,45 @@ It's a requirement to add the A record to the domain record set in order to suce
 If you use Cloud DNS and own a managed zone for your domain, use the IP address that's part of the module output to create the A record.
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L43-L54)
+
+## Identity-Aware Proxy
+
+The Atlantis UI can be secured using Google Cloud's Identity-Aware Proxy (IAP) service, which authenticates users with Google Accounts.
+
+### Enabling IAP
+
+Protecting Atlantis using Identity-Aware Proxy is very simple.
+
+Before you begin:
+
+- Configure the OAuth Consent Screen
+- Create OAuth credentials
+
+See [Enabling IAP](https://cloud.google.com/iap/docs/enabling-compute-howto#enabling_iap_console) on how to do this.
+
+Once you have the OAuth credentials. you simply have to set the `iap` variable.
+
+```hcl
+iap = {
+  oauth2_client_id    = data.google_secret_manager_secret_version.atlantis_client_id.secret_data
+  auth2_client_secret = data.google_secret_manager_secret_version.atlantis_client_secret.secret_data
+}
+```
+
+### What's exactly protected?
+
+When `iap` is set, a secondary IAP protected backend is created to handle all requests except those made to the `/events` path. The `/events` path is used to set up webhooks between platforms such as GitHub, BitBucket, and Atlantis.
+
+In short, everything is protected by IAP besides the `/events` path.
+
+### Permissions
+
+To grant a user access to your IAP protected Atlantis deployment, ensure that the principal (Google Account user) has the `roles/iap.httpsResourceAccessor` role attached to it.
+
+```hcl
+resource "google_iap_web_iam_member" "member" {
+  project = "<your-project-id>
+  role = "roles/iap.httpsResourceAccessor"
+  member = "user:jane@example.com"
+}
+```
