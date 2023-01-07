@@ -30,11 +30,15 @@ See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/m
 
 ## FAQ
 
+### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error.
+
+We expect you to use HTTPS because we are not routing or redirecting any HTTP requests.
+
 ### My VM experienced an outage and is taking some time to restart
 
 It may take up to three minutes for the Managed Instance Group to safely shut down and recreate the VM before it is considered healthy again.
 
-### Even though terraform apply worked correctly, I am receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
+### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
 
 This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned. 
 If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned. 
