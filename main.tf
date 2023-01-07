@@ -284,10 +284,63 @@ resource "google_compute_backend_service" "default" {
   project = var.project
 }
 
+resource "google_compute_backend_service" "iap" {
+  count                           = var.iap != null ? 1 : 0
+  name                            = "${var.name}-iap"
+  protocol                        = "HTTP"
+  port_name                       = local.port_name
+  timeout_sec                     = 10
+  connection_draining_timeout_sec = 5
+  load_balancing_scheme           = "EXTERNAL_MANAGED"
+  health_checks                   = [google_compute_health_check.default.id]
+
+  log_config {
+    enable = true
+  }
+
+  iap {
+    oauth2_client_id     = var.iap.oauth2_client_id
+    oauth2_client_secret = var.iap.oauth2_client_secret
+  }
+
+  backend {
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 0.8
+    group           = google_compute_instance_group_manager.default.instance_group
+  }
+  project = var.project
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "google_compute_url_map" "default" {
   name            = var.name
-  default_service = google_compute_backend_service.default.id
   project         = var.project
+  default_service = google_compute_backend_service.default.id
+
+  # As Atlantis uses the `/events` path to handle incoming webhook events
+  # we shouldn't put it behind IAP, it should be protected using a webhook secret.
+  dynamic "host_rule" {
+    for_each = var.iap != null ? [1] : []
+    content {
+      hosts        = [var.domain]
+      path_matcher = "events"
+    }
+  }
+
+  dynamic "path_matcher" {
+    for_each = var.iap != null ? [1] : []
+    content {
+      name            = "events"
+      default_service = google_compute_backend_service.iap[0].id
+      path_rule {
+        paths   = ["/events"]
+        service = google_compute_backend_service.default.id
+      }
+    }
+  }
 }
 
 resource "google_compute_target_https_proxy" "default" {
