@@ -258,7 +258,7 @@ resource "google_compute_global_address" "default" {
 resource "google_compute_managed_ssl_certificate" "default" {
   name = var.name
   managed {
-    domains = ["${var.domain}"]
+    domains = [var.domain]
   }
   project = var.project
 }
