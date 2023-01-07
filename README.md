@@ -96,7 +96,7 @@ Note that you must grant the relevant permissions to your service account yourse
 
 The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L2-L17)
+See [`main.tf`](https://github.com/bschaatsbergen/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L16-L33)
 
 ## DNS Record
 
