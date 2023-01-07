@@ -19,11 +19,9 @@ You should already have the following resources:
 
 To deploy the Atlantis module, see [`Dockerfile`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars/Dockerfile) and the [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars/main.tf).
 
-### Notes
+### Important
 
-- Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
-
-- If you bring your own Docker image, be sure to create an Atlantis user using a uid (user ID) of 100.
+- If you bring your own Docker image (not using any Atlantis image as base image), be sure to create an Atlantis user using a uid (user ID) of 100.
 
 ## Configuring Atlantis
 
@@ -47,4 +45,4 @@ env_vars = {
 }
 ```
 
-> **Important**: Do **not** specify the same environment variable in both the env_vars and the Dockerfile, as this will cause the deployment to fail.
+> **Important**: Do **not** specify the same environment variable in both the env_vars and the Dockerfile, as this might cause the deployment to fail.

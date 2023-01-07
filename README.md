@@ -8,6 +8,18 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
   - [Basic](examples/basic)
   - [Complete](examples/complete)
   - [Secured Environment Variables](examples/secure-env-vars)
+- [How to deploy](#how-to-deploy)
+  - [Important](#important)
+- [Configuring Atlantis](#configuring-atlantis)
+  - [Setting sensitive environment variables](#setting-sensitive-environment-variables)
+- [Service Account](#service-account)
+  - [Permissions](#permissions)
+- [DNS Record](#dns-record)
+  - [Example](#example)
+- [Identity-Aware Proxy](#identity-aware-proxy)
+  - [Enabling IAP](#enabling-iap)
+  - [What's exactly protected?](#whats-exactly-protected)
+  - [Permissions](#permissions)
 - [FAQ](#faq)
 - [Requirements](#requirements)
 
@@ -41,6 +53,91 @@ If you prefer an example that includes the above resources, see [`complete examp
 
 See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) directory.
 
+## How to deploy
+
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
+
+### Important
+
+- Provisioning the Google Cloud Managed SSL certificate can take up to 25 minutes after the `terraform apply` has finished.
+
+- If you bring your own Docker image (*not using any Atlantis image as base image*), be sure to create an Atlantis user using a uid (user ID) of 100.
+
+## Configuring Atlantis
+
+Atlantis offers the ability to configure everything through environment variables.
+
+The module exposes a variable: `var.env_vars` where you can pass any environment variable you want.
+
+```hcl
+env_vars = {
+  ATLANTIS_EXAMPLE = "example"
+}
+```
+
+For an overview of all possible environment variables, see: [Atlantis Server Configuration](https://www.runatlantis.io/docs/server-configuration.html#flags)
+
+### Setting sensitive environment variables
+
+See [secured environment variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars) for an example on how to deal with sensitive values in environment variables.
+
+## Service Account
+
+As Google recommends custom service accounts and permissions granted via IAM Roles. We advice that you bring your own service account.
+
+Note that you must grant the relevant permissions to your service account yourself, e.g. Storage related permissions for the Terraform state bucket and other permissions in order to create resources through Terraform.
+
+### Permissions
+
+The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
+
+See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L2-L17)
+
+## DNS Record
+
+This example uses Cloud DNS to add an A record containing the load balancer IP address. If you don't use Cloud DNS, please add the A record using the load balancer IP address on the platform where you've registered your domain.
+
+It's a requirement to add the A record to the domain record set in order to sucessfully provision the certificate!
+
+### Example
+
+If you use Cloud DNS and own a managed zone for your domain, use the IP address that's part of the module output to create the A record.
+
+See [`main.tf`](https://github.com/bschaatsbergen/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L60-L71)
+
+## Identity-Aware Proxy
+
+Google Cloud's Identity-Aware Proxy (IAP) is a service that can be used to secure the Atlantis UI by authenticating users with Google Accounts
+
+### Enabling IAP
+
+To enable IAP, you will need to configure the OAuth Consent Screen and create OAuth credentials, as described in the [Enabling IAP](https://cloud.google.com/iap/docs/enabling-compute-howto#enabling_iap_console) guide.
+
+Once you have the OAuth credentials, you can set the `iap` variable to use them.
+
+```hcl
+iap = {
+  oauth2_client_id    = data.google_secret_manager_secret_version.atlantis_client_id.secret_data
+  auth2_client_secret = data.google_secret_manager_secret_version.atlantis_client_secret.secret_data
+}
+```
+
+### What's exactly protected?
+
+With IAP enabled, all requests to Atlantis will be protected, except for those made to the `/events` path, which is used for webhooks between platforms such as GitHub and BitBucket.
+
+### Permissions
+
+To grant a user access to your IAP-protected Atlantis deployment, you will need to give them the `roles/iap.httpsResourceAccessor` role.
+
+```hcl
+resource "google_iap_web_iam_member" "member" {
+  project = "<your-project-id>"
+  role = "roles/iap.httpsResourceAccessor"
+  member = "user:jane@example.com"
+}
+```
+
 ## FAQ
 
 ### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error.
@@ -58,76 +155,78 @@ If all configurations are correct, it may take up to 25 minutes for the certific
 You can check the status of the certificate in the Google Cloud Console.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
-| <a name="requirement_cloudinit"></a> [cloudinit](#requirement\_cloudinit) | >=2.2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.47.0 |
+| Name                                                                     | Version   |
+| ------------------------------------------------------------------------ | --------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 0.13.0 |
+| <a name="requirement_cloudinit"></a> [cloudinit](#requirement_cloudinit) | >=2.2.0   |
+| <a name="requirement_google"></a> [google](#requirement_google)          | >=4.47.0  |
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | 4.47.0 |
+| Name                                                               | Version |
+| ------------------------------------------------------------------ | ------- |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider_cloudinit) | 2.2.0   |
+| <a name="provider_google"></a> [google](#provider_google)          | 4.47.0  |
 
 ## Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | 3.1.0 |
+| Name                                                           | Source                                       | Version |
+| -------------------------------------------------------------- | -------------------------------------------- | ------- |
+| <a name="module_container"></a> [container](#module_container) | terraform-google-modules/container-vm/google | 3.1.0   |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
-| [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
-| [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
-| [google_compute_global_address.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address) | resource |
-| [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule) | resource |
-| [google_compute_health_check.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
-| [google_compute_health_check.default_instance_group_manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
-| [google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group_manager) | resource |
-| [google_compute_instance_template.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template) | resource |
-| [google_compute_managed_ssl_certificate.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate) | resource |
-| [google_compute_route.public_internet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route) | resource |
-| [google_compute_target_https_proxy.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy) | resource |
-| [google_compute_url_map.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map) | resource |
-| [cloudinit_config.config](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
-| [google_compute_image.cos](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
+| Name                                                                                                                                                              | Type        |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service)                  | resource    |
+| [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service)                      | resource    |
+| [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall)                        | resource    |
+| [google_compute_global_address.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address)                    | resource    |
+| [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule)      | resource    |
+| [google_compute_health_check.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check)                        | resource    |
+| [google_compute_health_check.default_instance_group_manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource    |
+| [google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group_manager)    | resource    |
+| [google_compute_instance_template.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template)              | resource    |
+| [google_compute_managed_ssl_certificate.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate)  | resource    |
+| [google_compute_route.public_internet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route)                              | resource    |
+| [google_compute_target_https_proxy.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy)            | resource    |
+| [google_compute_url_map.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map)                                  | resource    |
+| [cloudinit_config.config](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config)                                            | data source |
+| [google_compute_image.cos](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image)                                       | data source |
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
-| <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
-| <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
-| <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
-| <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
-| <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
-| <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on | `string` | `"n2-standard-2"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
-| <a name="input_network"></a> [network](#input\_network) | Name of the network | `string` | n/a | yes |
-| <a name="input_persistent_disk_size_gb"></a> [persistent\_disk\_size\_gb](#input\_persistent\_disk\_size\_gb) | The size of the persistent disk that Atlantis uses to store its data on | `number` | `50` | no |
-| <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
-| <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
-| <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |
-| <a name="input_spot_machine_enabled"></a> [spot\_machine\_enabled](#input\_spot\_machine\_enabled) | A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed | `bool` | `false` | no |
-| <a name="input_startup_script"></a> [startup\_script](#input\_startup\_script) | A startup script that runs during the boot cycle when you first launch an instance | `string` | `null` | no |
-| <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | Name of the subnetwork to attach a network interface to | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | Tags to attach to the instance running Atlantis | `list(string)` | `[]` | no |
-| <a name="input_zone"></a> [zone](#input\_zone) | The zone that instances should be created in | `string` | n/a | yes |
+| Name                                                                                                                        | Description                                                                                                                             | Type                                                                                       | Default                                                                       | Required |
+| --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | :------: |
+| <a name="input_block_project_ssh_keys_enabled"></a> [block_project_ssh_keys_enabled](#input_block_project_ssh_keys_enabled) | Blocks the use of project-wide publich SSH keys                                                                                         | `bool`                                                                                     | `false`                                                                       |    no    |
+| <a name="input_disk_kms_key_self_link"></a> [disk_kms_key_self_link](#input_disk_kms_key_self_link)                         | The self link of the encryption key that is stored in Google Cloud KMS                                                                  | `string`                                                                                   | `null`                                                                        |    no    |
+| <a name="input_domain"></a> [domain](#input_domain)                                                                         | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://`                                      | `string`                                                                                   | n/a                                                                           |   yes    |
+| <a name="input_env_vars"></a> [env_vars](#input_env_vars)                                                                   | Key-value pairs representing environment variables and their respective values                                                          | `map(any)`                                                                                 | n/a                                                                           |   yes    |
+| <a name="input_iap"></a> [iap](#input_iap)                                                                                  | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI                                                             | <pre>object({<br> oauth2_client_id = string<br> oauth2_client_secret = string<br> })</pre> | `null`                                                                        |    no    |
+| <a name="input_image"></a> [image](#input_image)                                                                            | Docker image. This is most often a reference to a container located in a container registry                                             | `string`                                                                                   | `"ghcr.io/runatlantis/atlantis:latest"`                                       |    no    |
+| <a name="input_machine_type"></a> [machine_type](#input_machine_type)                                                       | The machine type to run Atlantis on                                                                                                     | `string`                                                                                   | `"n2-standard-2"`                                                             |    no    |
+| <a name="input_name"></a> [name](#input_name)                                                                               | Custom name that's used during resource creation                                                                                        | `string`                                                                                   | n/a                                                                           |   yes    |
+| <a name="input_network"></a> [network](#input_network)                                                                      | Name of the network                                                                                                                     | `string`                                                                                   | n/a                                                                           |   yes    |
+| <a name="input_persistent_disk_size_gb"></a> [persistent_disk_size_gb](#input_persistent_disk_size_gb)                      | The size of the persistent disk that Atlantis uses to store its data on                                                                 | `number`                                                                                   | `50`                                                                          |    no    |
+| <a name="input_project"></a> [project](#input_project)                                                                      | The ID of the project in which the resource belongs                                                                                     | `string`                                                                                   | `null`                                                                        |    no    |
+| <a name="input_region"></a> [region](#input_region)                                                                         | The region that resources should be created in                                                                                          | `string`                                                                                   | n/a                                                                           |   yes    |
+| <a name="input_service_account"></a> [service_account](#input_service_account)                                              | Service account to attach to the instance running Atlantis                                                                              | <pre>object({<br> email = string,<br> scopes = list(string)<br> })</pre>                   | <pre>{<br> "email": "",<br> "scopes": [<br> "cloud-platform"<br> ]<br>}</pre> |    no    |
+| <a name="input_spot_machine_enabled"></a> [spot_machine_enabled](#input_spot_machine_enabled)                               | A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed | `bool`                                                                                     | `false`                                                                       |    no    |
+| <a name="input_startup_script"></a> [startup_script](#input_startup_script)                                                 | A startup script that runs during the boot cycle when you first launch an instance                                                      | `string`                                                                                   | `null`                                                                        |    no    |
+| <a name="input_subnetwork"></a> [subnetwork](#input_subnetwork)                                                             | Name of the subnetwork to attach a network interface to                                                                                 | `string`                                                                                   | n/a                                                                           |   yes    |
+| <a name="input_tags"></a> [tags](#input_tags)                                                                               | Tags to attach to the instance running Atlantis                                                                                         | `list(string)`                                                                             | `[]`                                                                          |    no    |
+| <a name="input_zone"></a> [zone](#input_zone)                                                                               | The zone that instances should be created in                                                                                            | `string`                                                                                   | n/a                                                                           |   yes    |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_cos_image_id"></a> [cos\_image\_id](#output\_cos\_image\_id) | The unique identifier for the Container-Optimized OS image used to create the Compute Engine instance. |
-| <a name="output_ip_address"></a> [ip\_address](#output\_ip\_address) | The IPv4 address of the load balancer |
-| <a name="output_managed_ssl_certificate_certificate_id"></a> [managed\_ssl\_certificate\_certificate\_id](#output\_managed\_ssl\_certificate\_certificate\_id) | The unique identifier for the Google Managed SSL certificate |
-| <a name="output_managed_ssl_certificate_expire_time"></a> [managed\_ssl\_certificate\_expire\_time](#output\_managed\_ssl\_certificate\_expire\_time) | Expire time of the Google Managed SSL certificate |
+| Name                                                                                                                                                  | Description                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| <a name="output_cos_image_id"></a> [cos_image_id](#output_cos_image_id)                                                                               | The unique identifier for the Container-Optimized OS image used to create the Compute Engine instance. |
+| <a name="output_ip_address"></a> [ip_address](#output_ip_address)                                                                                     | The IPv4 address of the load balancer                                                                  |
+| <a name="output_managed_ssl_certificate_certificate_id"></a> [managed_ssl_certificate_certificate_id](#output_managed_ssl_certificate_certificate_id) | The unique identifier for the Google Managed SSL certificate                                           |
+| <a name="output_managed_ssl_certificate_expire_time"></a> [managed_ssl_certificate_expire_time](#output_managed_ssl_certificate_expire_time)          | Expire time of the Google Managed SSL certificate                                                      |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
