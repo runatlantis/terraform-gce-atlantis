@@ -5,12 +5,12 @@ output "ip_address" {
 
 output "cos_image_id" {
   value       = data.google_compute_image.cos.image_id
-  description = "The unique identifier for the Container-Optimized OS image used to create the Compute Engine instance."
+  description = "The unique identifier of the Container-Optimized OS image used to create the Compute Engine instance."
 }
 
 output "managed_ssl_certificate_certificate_id" {
   value       = google_compute_managed_ssl_certificate.default.certificate_id
-  description = "The unique identifier for the Google Managed SSL certificate"
+  description = "The unique identifier of the Google Managed SSL certificate"
 }
 
 output "managed_ssl_certificate_expire_time" {
