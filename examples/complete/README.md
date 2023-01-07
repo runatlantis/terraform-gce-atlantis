@@ -99,7 +99,7 @@ To grant a user access to your IAP-protected Atlantis deployment, you will need 
 
 ```hcl
 resource "google_iap_web_iam_member" "member" {
-  project = "<your-project-id>
+  project = "<your-project-id>"
   role = "roles/iap.httpsResourceAccessor"
   member = "user:jane@example.com"
 }
