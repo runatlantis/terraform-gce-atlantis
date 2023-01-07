@@ -81,6 +81,15 @@ variable "block_project_ssh_keys_enabled" {
   default     = false
 }
 
+variable "iap" {
+  type = object({
+    oauth2_client_id     = string
+    oauth2_client_secret = string
+  })
+  description = "Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI"
+  default     = null
+}
+
 variable "tags" {
   type        = list(string)
   description = "Tags to attach to the instance running Atlantis."
