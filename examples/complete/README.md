@@ -11,6 +11,8 @@ Read through the below before you deploy this module.
   - [Permissions](#permissions)
 - [DNS Record](#dns-record)
   - [Example](#example)
+- [Identity-Aware Proxy](#identity-aware-proxy)
+  - [Permissions](#permissions)
 
 ## Prerequisites
 
@@ -69,3 +71,36 @@ It's a requirement to add the A record to the domain record set in order to suce
 If you use Cloud DNS and own a managed zone for your domain, use the IP address that's part of the module output to create the A record.
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf#L43-L54)
+
+## Identity-Aware Proxy
+
+Google Cloud's Identity-Aware Proxy (IAP) is a service that can be used to secure the Atlantis UI by authenticating users with Google Accounts
+
+### Enabling IAP
+
+To enable IAP, you will need to configure the OAuth Consent Screen and create OAuth credentials, as described in the [Enabling IAP](https://cloud.google.com/iap/docs/enabling-compute-howto#enabling_iap_console) guide.
+
+ Once you have the OAuth credentials, you can set the `iap` variable to use them.
+
+```hcl
+iap = {
+  oauth2_client_id    = data.google_secret_manager_secret_version.atlantis_client_id.secret_data
+  auth2_client_secret = data.google_secret_manager_secret_version.atlantis_client_secret.secret_data
+}
+```
+
+### What's exactly protected?
+
+With IAP enabled, all requests to Atlantis will be protected, except for those made to the `/events` path, which is used for webhooks between platforms such as GitHub and BitBucket.
+
+### Permissions
+
+To grant a user access to your IAP-protected Atlantis deployment, you will need to give them the `roles/iap.httpsResourceAccessor` role.
+
+```hcl
+resource "google_iap_web_iam_member" "member" {
+  project = "<your-project-id>"
+  role = "roles/iap.httpsResourceAccessor"
+  member = "user:jane@example.com"
+}
+```

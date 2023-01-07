@@ -3,9 +3,9 @@
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
 - [Example Usage](#example-usage)
-    - [Basic](examples/basic)
-    - [Complete](examples/complete)
-    - [Secured Environment Variables](examples/secure-env-vars)
+  - [Basic](examples/basic)
+  - [Complete](examples/complete)
+  - [Secured Environment Variables](examples/secure-env-vars)
 - [Feature highlights](#feature-highlights)
 - [FAQ](#faq)
 - [Requirements](#requirements)
@@ -21,6 +21,8 @@ See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/m
 - **Managed Instance Group** - The VM instance is part of a MIG (Managed Instance Group), this ensures that Atlantis is always up and running.
 
 - **External HTTPS Load Balancer** - A Layer 7 load balancer is created together with a managed SSL certificate for the provided domain.
+
+- **Identity-Aware Proxy** - The Atlantis UI can be protected by Google Cloud Identity-Aware Proxy, this adds an additional layer of security by requiring users to authenticate with their Google account.
 
 - **Custom port for Atlantis** - This module features the ability to run Atlantis on a custom port, simply set the `ATLANTIS_PORT` environment variable.
 
@@ -40,8 +42,8 @@ It may take up to three minutes for the Managed Instance Group to safely shut do
 
 ### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
 
-This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned. 
-If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned. 
+This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned.
+If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned.
 You can check the status of the certificate in the Google Cloud Console.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -57,8 +59,8 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | >=4.47.0 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.2.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.47.0 |
 
 ## Modules
 
@@ -71,6 +73,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Type |
 |------|------|
 | [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
+| [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_global_address.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address) | resource |
 | [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule) | resource |
@@ -93,6 +96,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
 | <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
+| <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry. | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on | `string` | `"n2-standard-2"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
