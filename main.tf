@@ -11,6 +11,90 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
+data "template_cloudinit_config" "config" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename     = "atlantis-chown-disk.service"
+    content_type = "text/cloud-config"
+    content = yamlencode({
+      write_files = [
+        {
+          path        = "/etc/systemd/system/atlantis-chown-disk.service"
+          permissions = "0644"
+          owner       = "root"
+          content     = <<EOF
+          [Unit]
+          Description=Change ownership of the mount path to the Atlantis uid
+          Wants=konlet-startup.service
+          After=konlet-startup.service
+          [Service]
+          ExecStart=/bin/chown 100 /mnt/disks/gce-containers-mounts/gce-persistent-disks/atlantis-disk-0
+          Restart=on-failure
+          RestartSec=30
+          StandardOutput=journal+console
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        }
+      ]
+    })
+  }
+
+  part {
+    filename     = "runcmda"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      runcmd = [
+        "systemctl daemon-reload",
+        "systemctl start --no-block atlantis-chown-disk.service"
+      ]
+    })
+  }
+}
+
+module "container" {
+  source  = "terraform-google-modules/container-vm/google"
+  version = "3.1.0"
+
+  container = {
+    image = var.image
+    securityContext = {
+      privileged = true
+    }
+    tty = true
+    env = [for key, value in var.env_vars : {
+      name  = key
+      value = value
+    }]
+
+    # Declare volumes to be mounted.
+    # This is similar to how docker volumes are declared.
+    volumeMounts = [
+      {
+        mountPath = local.atlantis_data_dir
+        name      = "atlantis-disk-0"
+        readOnly  = false
+      },
+    ]
+  }
+
+  volumes = [
+    {
+      name = "atlantis-disk-0"
+
+      gcePersistentDisk = {
+        pdName = "atlantis-disk-0"
+        fsType = "ext4"
+      }
+    },
+  ]
+
+  restart_policy = "Always"
+}
+
 resource "google_compute_instance_template" "default" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix = "${var.name}-"
@@ -19,10 +103,11 @@ resource "google_compute_instance_template" "default" {
 
   tags = concat(["atlantis"], var.tags)
 
-  metadata_startup_script = templatefile("${path.module}/startup-script.sh", { disk_name = "atlantis-disk-0" })
+  metadata_startup_script = null
 
   metadata = {
     "gce-container-declaration" = module.container.metadata_value
+    "user-data"                 = data.template_cloudinit_config.config.rendered
     "google-logging-enabled"    = true
     "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
   }
@@ -99,46 +184,6 @@ resource "google_compute_instance_template" "default" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-module "container" {
-  source  = "terraform-google-modules/container-vm/google"
-  version = "3.1.0"
-
-  container = {
-    image = var.image
-    securityContext = {
-      privileged = true
-    }
-    tty = true
-    env = [for key, value in var.env_vars : {
-      name  = key
-      value = value
-    }]
-
-    # Declare volumes to be mounted.
-    # This is similar to how docker volumes are declared.
-    volumeMounts = [
-      {
-        mountPath = local.atlantis_data_dir
-        name      = "atlantis-disk-0"
-        readOnly  = false
-      },
-    ]
-  }
-
-  volumes = [
-    {
-      name = "atlantis-disk-0"
-
-      gcePersistentDisk = {
-        pdName = "atlantis-disk-0"
-        fsType = "ext4"
-      }
-    },
-  ]
-
-  restart_policy = "Always"
 }
 
 resource "google_compute_health_check" "default" {
