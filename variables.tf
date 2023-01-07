@@ -41,6 +41,12 @@ variable "spot_machine_enabled" {
   default     = false
 }
 
+variable "startup_script" {
+  type        = string
+  description = "A startup script that runs during the boot cycle when you first launch an instance"
+  default     = null
+}
+
 variable "disk_kms_key_self_link" {
   type        = string
   description = "The self link of the encryption key that is stored in Google Cloud KMS"
@@ -92,12 +98,12 @@ variable "iap" {
 
 variable "tags" {
   type        = list(string)
-  description = "Tags to attach to the instance running Atlantis."
+  description = "Tags to attach to the instance running Atlantis"
   default     = []
 }
 
 variable "project" {
   type        = string
-  description = "The ID of the project in which the resource belongs."
+  description = "The ID of the project in which the resource belongs"
   default     = null
 }
