@@ -52,7 +52,11 @@ If you prefer an example that includes the above resources, see [`complete examp
 
 ## Example Usage
 
-See the [`examples`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic) directory.
+Here are some examples to choose from. Look at the prerequisites above to find one that is appropriate for your configuration.
+
+- [Basic](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic)
+- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete) 
+- [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 
 ## How to deploy
 
