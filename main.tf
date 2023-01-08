@@ -96,7 +96,6 @@ module "container" {
 }
 
 resource "google_compute_instance_template" "default" {
-  # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
   name_prefix             = "${var.name}-"
   description             = "This template is used to create VMs that run Atlantis in a containerized environment using Docker"
   instance_description    = "VM running Atlantis in a containerized environment using Docker"
