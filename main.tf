@@ -97,12 +97,12 @@ module "container" {
 
 resource "google_compute_instance_template" "default" {
   # checkov:skip=CKV_GCP_32:Ensure 'Block Project-wide SSH keys' is enabled for VM instances
-  name_prefix = "${var.name}-"
-  description = "This template is used to create VMs that run Atlantis in a containerized environment using Docker"
-  region      = var.region
-
-  tags = concat(["atlantis"], var.tags)
-
+  name_prefix             = "${var.name}-"
+  description             = "This template is used to create VMs that run Atlantis in a containerized environment using Docker"
+  instance_description    = "VM running Atlantis in a containerized environment using Docker"
+  region                  = var.region
+  machine_type            = var.machine_type
+  can_ip_forward          = false
   metadata_startup_script = var.startup_script
 
   metadata = {
@@ -111,14 +111,6 @@ resource "google_compute_instance_template" "default" {
     "google-logging-enabled"    = true
     "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
   }
-
-  labels = {
-    "container-vm" = module.container.vm_container_label
-  }
-
-  instance_description = "VM running Atlantis in a containerized environment using Docker"
-  machine_type         = var.machine_type
-  can_ip_forward       = false
 
   # Using the below scheduling configuration,
   # the managed instance group will recreate the Spot VM if Compute Engine stops them
@@ -175,6 +167,12 @@ resource "google_compute_instance_template" "default" {
   service_account {
     email  = var.service_account.email
     scopes = var.service_account.scopes
+  }
+
+  tags = concat(["atlantis"], var.tags)
+
+  labels = {
+    "container-vm" = module.container.vm_container_label
   }
 
   project = var.project
