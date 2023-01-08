@@ -2,8 +2,16 @@ locals {
   # The default port that Atlantis runs on is 4141.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
   # Atlantis its home directory is "/home/atlantis".
-  atlantis_data_dir = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
-  port_name         = "atlantis"
+  atlantis_data_dir    = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
+  port_name            = "atlantis"
+  network_traffic_tags = ["atlantis-${random_string.random.result}"]
+}
+
+resource "random_string" "random" {
+  length  = 6
+  special = false
+  lower   = true
+  upper   = false
 }
 
 data "google_compute_image" "cos" {
@@ -168,7 +176,7 @@ resource "google_compute_instance_template" "default" {
     scopes = var.service_account.scopes
   }
 
-  tags = concat(["atlantis"], var.tags)
+  tags = concat(local.network_traffic_tags, var.tags)
 
   labels = {
     "container-vm" = module.container.vm_container_label
@@ -369,7 +377,7 @@ resource "google_compute_route" "public_internet" {
   next_hop_gateway = "default-internet-gateway"
   priority         = 0
   project          = var.project
-  tags             = ["atlantis"]
+  tags             = local.network_traffic_tags
 }
 
 # This firewall rule allows Google Cloud to issue the health checks
@@ -385,5 +393,5 @@ resource "google_compute_firewall" "lb_health_check" {
   # These are the source IP ranges for health checks (managed by Google Cloud)
   source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
   project       = var.project
-  target_tags   = ["atlantis"]
+  target_tags   = local.network_traffic_tags
 }
