@@ -228,7 +228,6 @@ resource "google_compute_instance_group_manager" "default" {
     instance_template = google_compute_instance_template.default.id
   }
 
-
   named_port {
     name = local.port_name
     port = local.atlantis_port
