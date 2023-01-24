@@ -19,6 +19,10 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
+data "google_netblock_ip_ranges" "health_checkers" {
+  range_type = "health-checkers"
+}
+
 data "cloudinit_config" "config" {
   gzip          = false
   base64_encode = false
@@ -184,7 +188,7 @@ resource "google_compute_instance_template" "default" {
 
   project = var.project
 
-  # Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
+  # Instance Templates cannot be updated after creation with the Google Cloud Platform API.
   # In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
     create_before_destroy = true
@@ -390,7 +394,7 @@ resource "google_compute_firewall" "lb_health_check" {
     protocol = "tcp"
   }
   # These are the source IP ranges for health checks (managed by Google Cloud)
-  source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
+  source_ranges = data.google_netblock_ip_ranges.health_checkers.cidr_blocks_ipv4
   project       = var.project
   target_tags   = local.network_traffic_tags
 }
