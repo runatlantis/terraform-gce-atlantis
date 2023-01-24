@@ -19,8 +19,12 @@ data "google_compute_image" "cos" {
   project = "cos-cloud"
 }
 
-data "google_netblock_ip_ranges" "health_checkers" {
-  range_type = "health-checkers"
+data "google_netblock_ip_ranges" "this" {
+  for_each = toset([
+    "health-checkers",
+    "legacy-health-checkers",
+  ])
+  range_type = each.key
 }
 
 data "cloudinit_config" "config" {
@@ -394,7 +398,10 @@ resource "google_compute_firewall" "lb_health_check" {
     protocol = "tcp"
   }
   # These are the source IP ranges for health checks (managed by Google Cloud)
-  source_ranges = data.google_netblock_ip_ranges.health_checkers.cidr_blocks_ipv4
-  project       = var.project
-  target_tags   = local.network_traffic_tags
+  source_ranges = distinct(concat(
+    data.google_netblock_ip_ranges.this["health-checkers"].cidr_blocks_ipv4,
+    data.google_netblock_ip_ranges.this["legacy-health-checkers"].cidr_blocks_ipv4,
+  ))
+  project     = var.project
+  target_tags = local.network_traffic_tags
 }
