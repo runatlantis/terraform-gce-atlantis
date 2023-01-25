@@ -184,7 +184,7 @@ resource "google_compute_instance_template" "default" {
 
   project = var.project
 
-  # Instance Templates cannot be updated after creation with the Google Cloud Platform API. 
+  # Instance Templates cannot be updated after creation with the Google Cloud Platform API.
   # In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
     create_before_destroy = true
@@ -279,7 +279,8 @@ resource "google_compute_backend_service" "default" {
   health_checks                   = [google_compute_health_check.default.id]
 
   log_config {
-    enable = true
+    enable      = true
+    sample_rate = 1
   }
 
   backend {
