@@ -55,7 +55,7 @@ If you prefer an example that includes the above resources, see [`complete examp
 Here are some examples to choose from. Look at the prerequisites above to find one that is appropriate for your configuration.
 
 - [Basic](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic)
-- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete) 
+- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 
 ## How to deploy
@@ -149,7 +149,7 @@ resource "google_iap_web_iam_member" "member" {
 
 ## FAQ
 
-### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error.
+### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error
 
 We expect you to use HTTPS because we are not routing or redirecting any HTTP requests.
 
@@ -157,7 +157,7 @@ We expect you to use HTTPS because we are not routing or redirecting any HTTP re
 
 It may take up to three minutes for the Managed Instance Group to safely shut down and recreate the VM before it is considered healthy again.
 
-### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
+### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error
 
 This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned.
 If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned.
@@ -213,6 +213,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
+| <a name="input_enable_oslogin"></a> [enable\_oslogin](#enable\_oslogin) | Enables OS Login service on the VM | `bool` | `false` | no |
 | <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
 | <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
