@@ -121,10 +121,11 @@ resource "google_compute_instance_template" "default" {
   metadata_startup_script = var.startup_script
 
   metadata = {
-    "gce-container-declaration" = module.container.metadata_value
-    "user-data"                 = data.cloudinit_config.config.rendered
-    "google-logging-enabled"    = true
-    "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
+    gce-container-declaration = module.container.metadata_value
+    user-data                 = data.cloudinit_config.config.rendered
+    google-logging-enabled    = true
+    block-project-ssh-keys    = var.block_project_ssh_keys_enabled
+    enable-oslogin            = var.enable_oslogin
   }
 
   # Using the below scheduling configuration,
