@@ -55,7 +55,7 @@ If you prefer an example that includes the above resources, see [`complete examp
 Here are some examples to choose from. Look at the prerequisites above to find one that is appropriate for your configuration.
 
 - [Basic](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic)
-- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete) 
+- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 
 ## How to deploy
@@ -149,7 +149,7 @@ resource "google_iap_web_iam_member" "member" {
 
 ## FAQ
 
-### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error.
+### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error
 
 We expect you to use HTTPS because we are not routing or redirecting any HTTP requests.
 
@@ -157,7 +157,7 @@ We expect you to use HTTPS because we are not routing or redirecting any HTTP re
 
 It may take up to three minutes for the Managed Instance Group to safely shut down and recreate the VM before it is considered healthy again.
 
-### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error.
+### Even though terraform apply worked correctly, I'm receiving an ERR_SSL_VERSION_OR_CIPHER_MISMATCH error
 
 This error indicates that the Google Cloud Managed SSL certificate is not yet fully provisioned.
 If all configurations are correct, it may take up to 25 minutes for the certificate to be provisioned.
@@ -207,6 +207,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | [random_string.random](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [cloudinit_config.config](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 | [google_compute_image.cos](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
+| [google_netblock_ip_ranges.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/netblock_ip_ranges) | data source |
 
 ## Inputs
 
