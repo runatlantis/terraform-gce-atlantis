@@ -310,7 +310,8 @@ resource "google_compute_backend_service" "iap" {
   health_checks                   = [google_compute_health_check.default.id]
 
   log_config {
-    enable = true
+    enable      = true
+    sample_rate = 1
   }
 
   iap {
