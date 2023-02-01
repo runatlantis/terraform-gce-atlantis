@@ -332,9 +332,22 @@ resource "google_compute_backend_service" "iap" {
 }
 
 resource "google_compute_url_map" "default" {
-  name            = var.name
-  project         = var.project
-  default_service = google_compute_backend_service.default.id
+  name    = var.name
+  project = var.project
+
+  # If IAP is not used, use default backend service for unmatched requests
+  default_service = var.iap == null ? google_compute_backend_service.default.id : null
+
+  # If IAP is used, redirect unmatched requests to Atlantis domain
+  dynamic "default_url_redirect" {
+    for_each = var.iap != null ? [1] : []
+    content {
+      host_redirect          = var.domain
+      https_redirect         = true
+      redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+      strip_query            = false
+    }
+  }
 
   # As Atlantis uses the `/events` path to handle incoming webhook events
   # we shouldn't put it behind IAP, it should be protected using a webhook secret.
