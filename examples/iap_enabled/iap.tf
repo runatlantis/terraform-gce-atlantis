@@ -19,9 +19,7 @@ resource "google_iap_client" "atlantis" {
 # This resource allows access to Atlantis. Note that a binding resource
 # is canonical for this specific role for the project, and overrides any
 # other controls for the project. If that isn't desirable, you may want
-# to grant these permissions with another resource. Also, without any
-# condition, this grants access to all services secured with IAP in this
-# project.
+# to grant these permissions with another resource.
 resource "google_iap_web_backend_service_iam_binding" "atlantis" {
   web_backend_service = module.atlantis.iap_backend_service_name
   role                = "roles/iap.httpsResourceAccessor"
