@@ -2,6 +2,8 @@
 
 This guide explains how to use IAP to gate access to your Atlantis deployment. For more information on this module, see [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic). For more on IAP specifically, see the [`Google docs on IAP`](https://cloud.google.com/iap/docs/concepts-overview).
 
+Note that only internal org IAP clients can be created via Terraform. External clients must be manually created via the GCP console. This is due to a current restriction in the Google API.
+
 - [Prerequisites](#prerequisites)
 - [How to deploy](#how-to-deploy)
   - [Important](#important)
