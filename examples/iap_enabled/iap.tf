@@ -16,15 +16,14 @@ resource "google_iap_client" "atlantis" {
   project      = local.project_id
 }
 
-# This resource allows access to Atlantis. Note that a binding resource
-# is canonical for this specific role for the project, and overrides any
-# other controls for the project. If that isn't desirable, you may want
-# to grant these permissions with another resource.
-resource "google_iap_web_backend_service_iam_binding" "atlantis" {
+# The below resource will allow this person to access the UI via IAP.
+# Each person or entity you want to add to the allow list will need a
+# separate resource. If you would like to have a single place to define
+# your allow list, look into using the google_iap_web_backend_service_iam_binding
+# resource.
+resource "google_iap_web_backend_service_iam_member" "jane_atlantis" {
   web_backend_service = module.atlantis.iap_backend_service_name
   role                = "roles/iap.httpsResourceAccessor"
-  members = [
-    "user:you@example.com",
-  ]
-  project = local.project_id
+  member              = "user:jane@example.com"
+  project             = local.project_id
 }
