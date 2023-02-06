@@ -1,6 +1,8 @@
 # Using IAP to gate access to Atlantis
 
-This guide explains how to use IAP to gate access to your Atlantis deployment. For more information on this module, see [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic). For more on IAP specifically, see the [`Google docs on IAP`](https://cloud.google.com/iap/docs/concepts-overview).
+This guide explains how to use IAP to gate access to your Atlantis deployment. For more information on this module, see [`basic example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic).
+
+IAP allows you to put Google Auth (or an external SSO provider, if added outside Terraform) in front of the Atlantis UI, which is otherwise open to the world. For more on IAP specifically, see the [`Google docs on IAP`](https://cloud.google.com/iap/docs/concepts-overview).
 
 Note that only internal org IAP clients can be created via Terraform. External clients must be manually created via the GCP console. This is due to a current restriction in the Google API.
 
