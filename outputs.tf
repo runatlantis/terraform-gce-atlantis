@@ -17,3 +17,8 @@ output "managed_ssl_certificate_expire_time" {
   value       = google_compute_managed_ssl_certificate.default.expire_time
   description = "Expire time of the Google Managed SSL certificate"
 }
+
+output "iap_backend_service_name" {
+  value       = var.iap != null ? google_compute_backend_service.iap[0].name : null
+  description = "Name of the optional IAP-enabled backend service"
+}
