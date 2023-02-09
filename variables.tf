@@ -107,3 +107,9 @@ variable "project" {
   description = "The ID of the project in which the resource belongs"
   default     = null
 }
+
+variable "labels" {
+  type        = map(any)
+  description = "Key-value pairs representing labels attaching to instance & instance template"
+  default     = {}
+}

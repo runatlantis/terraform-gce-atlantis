@@ -5,6 +5,7 @@ locals {
   atlantis_data_dir    = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
   port_name            = "atlantis"
   network_traffic_tags = ["atlantis-${random_string.random.result}"]
+  labels               = merge(var.labels, { "container-vm" = module.container.vm_container_label })
 }
 
 resource "random_string" "random" {
@@ -144,6 +145,7 @@ resource "google_compute_instance_template" "default" {
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
+    labels       = local.labels
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -160,6 +162,7 @@ resource "google_compute_instance_template" "default" {
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
+    labels       = local.labels
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -186,9 +189,7 @@ resource "google_compute_instance_template" "default" {
 
   tags = concat(local.network_traffic_tags, var.tags)
 
-  labels = {
-    "container-vm" = module.container.vm_container_label
-  }
+  labels = local.labels
 
   project = var.project
 
