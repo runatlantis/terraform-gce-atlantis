@@ -29,6 +29,12 @@ variable "machine_type" {
   default     = "n2-standard-2"
 }
 
+variable "disk_source_image" {
+  type        = string
+  description = "The image from which to initialize this disk. This can be one of: the image's `self_link`, `projects/{project}/global/images/{image}`, `projects/{project}/global/images/family/{family}`, global/images/{image}, `global/images/family/{family}`, `family/{family}`, `{project}/{family}`, `{project}/{image}`, `{family}`, or `{image}`."
+  default     = null
+}
+
 variable "persistent_disk_size_gb" {
   type        = number
   description = "The size of the persistent disk that Atlantis uses to store its data on"

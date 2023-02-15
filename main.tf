@@ -139,7 +139,7 @@ resource "google_compute_instance_template" "default" {
 
   # Ephemeral OS boot disk
   disk {
-    source_image = data.google_compute_image.cos.self_link
+    source_image = var.disk_source_image != "" ? var.disk_source_image : data.google_compute_image.cos.self_link
     auto_delete  = true
     boot         = true
     disk_type    = "pd-ssd"
@@ -196,6 +196,9 @@ resource "google_compute_instance_template" "default" {
   # In order to update an Instance Template, Terraform will destroy the existing resource and create a replacement
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      disk[0].source_image
+    ]
   }
 }
 
