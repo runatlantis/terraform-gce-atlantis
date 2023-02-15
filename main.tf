@@ -139,7 +139,7 @@ resource "google_compute_instance_template" "default" {
 
   # Ephemeral OS boot disk
   disk {
-    source_image = var.disk_source_image != "" ? var.disk_source_image : data.google_compute_image.cos.self_link
+    source_image = var.disk_source_image != null ? var.disk_source_image : data.google_compute_image.cos.self_link
     auto_delete  = true
     boot         = true
     disk_type    = "pd-ssd"
