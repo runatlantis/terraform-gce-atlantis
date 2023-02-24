@@ -78,7 +78,7 @@ module "container" {
   container = {
     image = var.image
     securityContext = {
-      privileged = true
+      privileged = false
     }
     tty = true
     env = [for key, value in var.env_vars : {
