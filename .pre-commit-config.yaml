@@ -7,6 +7,7 @@ repos:
       - id: terraform_validate
         exclude: ^examples/
       - id: terraform_docs
+        args: ["--args=--lockfile=false"]
         exclude: ^examples/
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
