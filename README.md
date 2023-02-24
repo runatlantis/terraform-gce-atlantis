@@ -177,9 +177,9 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | 4.47.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | >=4.47.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
 
 ## Modules
 
@@ -237,6 +237,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Description |
 |------|-------------|
 | <a name="output_cos_image_id"></a> [cos\_image\_id](#output\_cos\_image\_id) | The unique identifier of the Container-Optimized OS image used to create the Compute Engine instance. |
+| <a name="output_iap_backend_service_name"></a> [iap\_backend\_service\_name](#output\_iap\_backend\_service\_name) | Name of the optional IAP-enabled backend service |
 | <a name="output_ip_address"></a> [ip\_address](#output\_ip\_address) | The IPv4 address of the load balancer |
 | <a name="output_managed_ssl_certificate_certificate_id"></a> [managed\_ssl\_certificate\_certificate\_id](#output\_managed\_ssl\_certificate\_certificate\_id) | The unique identifier of the Google Managed SSL certificate |
 | <a name="output_managed_ssl_certificate_expire_time"></a> [managed\_ssl\_certificate\_expire\_time](#output\_managed\_ssl\_certificate\_expire\_time) | Expire time of the Google Managed SSL certificate |
