@@ -13,7 +13,6 @@ resource "google_iap_brand" "example" {
 resource "google_iap_client" "atlantis" {
   display_name = "Atlantis"
   brand        = google_iap_brand.example.name
-  project      = local.project_id
 }
 
 # The below resource will allow this person to access the UI via IAP.
