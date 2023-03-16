@@ -87,6 +87,12 @@ variable "block_project_ssh_keys_enabled" {
   default     = false
 }
 
+variable "enable_oslogin" {
+  type        = bool
+  description = "Enables OS Login service on the VM"
+  default     = false
+}
+
 variable "iap" {
   type = object({
     oauth2_client_id     = string
@@ -106,4 +112,10 @@ variable "project" {
   type        = string
   description = "The ID of the project in which the resource belongs"
   default     = null
+}
+
+variable "labels" {
+  type        = map(any)
+  description = "Key-value pairs representing labels attaching to instance & instance template"
+  default     = {}
 }

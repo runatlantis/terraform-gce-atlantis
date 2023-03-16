@@ -5,6 +5,7 @@ locals {
   atlantis_data_dir    = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
   port_name            = "atlantis"
   network_traffic_tags = ["atlantis-${random_string.random.result}"]
+  labels               = merge(var.labels, { "container-vm" = module.container.vm_container_label })
 }
 
 resource "random_string" "random" {
@@ -121,10 +122,11 @@ resource "google_compute_instance_template" "default" {
   metadata_startup_script = var.startup_script
 
   metadata = {
-    "gce-container-declaration" = module.container.metadata_value
-    "user-data"                 = data.cloudinit_config.config.rendered
-    "google-logging-enabled"    = true
-    "block-project-ssh-keys"    = var.block_project_ssh_keys_enabled
+    gce-container-declaration = module.container.metadata_value
+    user-data                 = data.cloudinit_config.config.rendered
+    google-logging-enabled    = true
+    block-project-ssh-keys    = var.block_project_ssh_keys_enabled
+    enable-oslogin            = var.enable_oslogin
   }
 
   # Using the below scheduling configuration,
@@ -144,6 +146,7 @@ resource "google_compute_instance_template" "default" {
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
+    labels       = local.labels
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -160,6 +163,7 @@ resource "google_compute_instance_template" "default" {
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
+    labels       = local.labels
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -177,6 +181,7 @@ resource "google_compute_instance_template" "default" {
   shielded_instance_config {
     enable_integrity_monitoring = true
     enable_vtpm                 = true
+    enable_secure_boot          = true
   }
 
   service_account {
@@ -186,9 +191,7 @@ resource "google_compute_instance_template" "default" {
 
   tags = concat(local.network_traffic_tags, var.tags)
 
-  labels = {
-    "container-vm" = module.container.vm_container_label
-  }
+  labels = local.labels
 
   project = var.project
 
