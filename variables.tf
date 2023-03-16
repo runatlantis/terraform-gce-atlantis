@@ -87,6 +87,12 @@ variable "block_project_ssh_keys_enabled" {
   default     = false
 }
 
+variable "enable_oslogin" {
+  type        = bool
+  description = "Enables OS Login service on the VM"
+  default     = false
+}
+
 variable "iap" {
   type = object({
     oauth2_client_id     = string
