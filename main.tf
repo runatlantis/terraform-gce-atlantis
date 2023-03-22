@@ -16,7 +16,8 @@ resource "random_string" "random" {
 }
 
 data "google_compute_image" "cos" {
-  family  = "cos-stable"
+  name    = var.machine_image
+  family  = var.machine_image == null ? "cos-stable" : null
   project = "cos-cloud"
 }
 
@@ -141,7 +142,7 @@ resource "google_compute_instance_template" "default" {
 
   # Ephemeral OS boot disk
   disk {
-    source_image = var.machine_image != "" ? var.machine_image : data.google_compute_image.cos.self_link
+    source_image = data.google_compute_image.cos.self_link
     auto_delete  = true
     boot         = true
     disk_type    = "pd-ssd"

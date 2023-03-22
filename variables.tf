@@ -24,9 +24,9 @@ variable "zone" {
 }
 
 variable "machine_image" {
-  type = string
-  description = "The Machine image to create VMs with, if not specified, latest cos_stable/cos_cloud is used"
-  default = ""
+  type        = string
+  description = "The Machine image to create VMs with, if not specified, latest cos_cloud/cos_stable is used"
+  default     = null
 }
 
 variable "machine_type" {
