@@ -179,9 +179,9 @@ resource "google_compute_instance_template" "default" {
   }
 
   shielded_instance_config {
-    enable_integrity_monitoring = true
-    enable_vtpm                 = true
-    enable_secure_boot          = true
+    enable_integrity_monitoring = var.shielded_instance_config.enable_integrity_monitoring
+    enable_vtpm                 = var.shielded_instance_config.enable_vtpm
+    enable_secure_boot          = var.shielded_instance_config.enable_secure_boot
   }
 
   service_account {

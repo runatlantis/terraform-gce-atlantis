@@ -82,6 +82,20 @@ variable "service_account" {
   }
 }
 
+variable "shielded_instance_config" {
+  type = object({
+    enable_integrity_monitoring = optional(bool)
+    enable_vtpm                 = optional(bool)
+    enable_secure_boot          = optional(bool)
+  })
+  description = "Shielded VM provides verifiable integrity to prevent against malware and rootkits"
+  default = {
+    enable_integrity_monitoring = true
+    enable_vtpm                 = true
+    enable_secure_boot          = true
+  }
+}
+
 variable "domain" {
   type        = string
   description = "Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://`"
