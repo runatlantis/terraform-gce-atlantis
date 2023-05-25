@@ -1,11 +1,13 @@
 locals {
-  project_id   = "<your-project-id>"
-  network      = "<your-network>"
-  subnetwork   = "<your-subnetwork>"
-  region       = "<your-region>"
-  zone         = "<your-zone>"
-  domain       = "<example.com>"
-  managed_zone = "<your-managed-zone>"
+  project_id                   = "<your-project-id>"
+  region                       = "<your-region>"
+  zone                         = "<your-zone>"
+  domain                       = "<example.com>"
+  managed_zone                 = "<your-managed-zone>"
+  enable_oslogin               = false
+  google_logging_enabled       = true
+  google_logging_use_fluentbit = false
+  google_monitoring_enabled    = true
 
   github_repo_allow_list = "github.com/example/*"
   github_user            = "<your-github-handle>"
@@ -69,12 +71,16 @@ resource "google_compute_router_nat" "default" {
 }
 
 module "atlantis" {
-  source     = "bschaatsbergen/atlantis/gce"
-  name       = "atlantis"
-  network    = google_compute_network.default.name
-  subnetwork = google_compute_subnetwork.default.name
-  region     = local.region
-  zone       = local.zone
+  source                       = "bschaatsbergen/atlantis/gce"
+  name                         = "atlantis"
+  network                      = google_compute_network.default.name
+  subnetwork                   = google_compute_subnetwork.default.name
+  region                       = local.region
+  zone                         = local.zone
+  enable_oslogin               = local.enable_oslogin
+  google_logging_enabled       = local.google_logging_enabled
+  google_logging_use_fluentbit = local.google_logging_use_fluentbit
+  google_monitoring_enabled    = local.google_monitoring_enabled
   service_account = {
     email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]

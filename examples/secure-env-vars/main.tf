@@ -1,12 +1,16 @@
 locals {
-  project_id            = "<your-project-id>"
-  network               = "<your-network>"
-  subnetwork            = "<your-subnetwork>"
-  region                = "<your-region>"
-  zone                  = "<your-zone>"
-  image                 = "<your-image>"
-  domain                = "<example.com>"
-  managed_zone          = "<your-managed-zone>"
+  project_id                   = "<your-project-id>"
+  network                      = "<your-network>"
+  subnetwork                   = "<your-subnetwork>"
+  region                       = "<your-region>"
+  zone                         = "<your-zone>"
+  image                        = "<your-image>"
+  domain                       = "<example.com>"
+  managed_zone                 = "<your-managed-zone>"
+  enable_oslogin               = false
+  google_logging_enabled       = true
+  google_logging_use_fluentbit = false
+  google_monitoring_enabled    = true
 
   github_repo_allow_list = "github.com/example/*"
 }
@@ -31,13 +35,16 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 
 module "atlantis" {
-  source     = "bschaatsbergen/atlantis/gce"
-  name       = "atlantis"
-  image      = local.image # Your wrapper Atlantis Docker image
-  network    = local.network
-  subnetwork = local.subnetwork
-  region     = local.region
-  zone       = local.zone
+  source                       = "bschaatsbergen/atlantis/gce"
+  name                         = "atlantis"
+  image                        = local.image # Your wrapper Atlantis Docker image
+  network                      = local.network
+  subnetwork                   = local.subnetwork
+  region                       = local.region
+  zone                         = local.zone
+  google_logging_enabled       = local.google_logging_enabled
+  google_logging_use_fluentbit = local.google_logging_use_fluentbit
+  google_monitoring_enabled    = local.google_monitoring_enabled
   service_account = {
     email  = google_service_account.atlantis.email
     scopes = ["cloud-platform"]

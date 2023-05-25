@@ -139,3 +139,21 @@ variable "labels" {
   description = "Key-value pairs representing labels attaching to instance & instance template"
   default     = {}
 }
+
+variable "google_logging_enabled" {
+  type        = bool
+  description = "Enable Google Cloud Logging"
+  default     = true
+}
+
+variable "google_logging_use_fluentbit" {
+  type        = bool
+  description = "Enable Google Cloud Logging using Fluent Bit ( available from COS 105+ )"
+  default     = false
+}
+
+variable "google_monitoring_enabled" {
+  type        = bool
+  description = "Enable Google Cloud Monitoring"
+  default     = true
+}
