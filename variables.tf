@@ -124,7 +124,7 @@ variable "iap" {
 
 variable "ssl_policy" {
   type        = string
-  description = "The ssl policy name that certificate must follow"
+  description = "The SSL policy name that the certificate must follow"
   default     = null
 }
 
