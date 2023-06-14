@@ -122,6 +122,12 @@ variable "iap" {
   default     = null
 }
 
+variable "ssl_policy" {
+  type        = string
+  description = "The ssl policy name that certificate must follow"
+  default     = null
+}
+
 variable "tags" {
   type        = list(string)
   description = "Tags to attach to the instance running Atlantis"
