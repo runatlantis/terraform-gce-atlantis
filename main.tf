@@ -381,7 +381,8 @@ resource "google_compute_target_https_proxy" "default" {
   ssl_certificates = [
     google_compute_managed_ssl_certificate.default.id,
   ]
-  project = var.project
+  ssl_policy = var.ssl_policy
+  project    = var.project
 }
 
 resource "google_compute_global_forwarding_rule" "https" {

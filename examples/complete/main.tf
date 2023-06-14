@@ -105,3 +105,10 @@ resource "google_dns_record_set" "default" {
   ]
   project = local.project_id
 }
+
+resource "google_compute_ssl_policy" "default" {
+  name            = "example-ssl-policy"
+  profile         = "RESTRICTED"
+  min_tls_version = "TLS_1_2"
+  project         = local.project_id
+}
