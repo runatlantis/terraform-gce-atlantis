@@ -58,6 +58,15 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 - [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 
+
+```hcl
+module "atlantis" {
+  source  = "bschaatsbergen/atlantis/gce"
+  version = "1.3.1"
+  # insert the 7 required variables here
+}
+```
+
 ## How to deploy
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
