@@ -21,6 +21,12 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install pre-commit==3.5.0 checkov==2.5.10
+      - name: install terraform-docs
+        run: |
+          curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          chmod +x terraform-docs
+          mv terraform-docs /usr/local/bin/
       - name: Cache packages
         uses: actions/cache@v2
         with:
