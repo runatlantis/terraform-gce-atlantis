@@ -189,6 +189,7 @@ You can check the status of the certificate in the Google Cloud Console.
 |------|---------|
 | <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
 | <a name="provider_google"></a> [google](#provider\_google) | >=4.79.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | >=4.79.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
 
 ## Modules
@@ -201,6 +202,7 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Type |
 |------|------|
+| [google-beta_google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_instance_group_manager) | resource |
 | [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
@@ -208,7 +210,6 @@ You can check the status of the certificate in the Google Cloud Console.
 | [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule) | resource |
 | [google_compute_health_check.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
 | [google_compute_health_check.default_instance_group_manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
-| [google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group_manager) | resource |
 | [google_compute_instance_template.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template) | resource |
 | [google_compute_managed_ssl_certificate.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate) | resource |
 | [google_compute_route.public_internet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route) | resource |
