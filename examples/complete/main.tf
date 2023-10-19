@@ -33,17 +33,25 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 
 resource "google_compute_network" "default" {
-  name                    = "example-network"
-  auto_create_subnetworks = false
-  project                 = local.project_id
+  name                            = "example-network"
+  auto_create_subnetworks         = false
+  project                         = local.project_id
 }
 
 resource "google_compute_subnetwork" "default" {
-  name          = "example-subnetwork"
-  ip_cidr_range = "10.2.0.0/16"
-  region        = local.region
-  network       = google_compute_network.default.id
-  project       = local.project_id
+  name                       = "example-subnetwork"
+  ip_cidr_range              = "10.2.0.0/16"
+  region                     = local.region
+  network                    = google_compute_network.default.id
+  project                    = local.project_id
+  private_ip_google_access   = true
+  private_ipv6_google_access = "ENABLE_BIDIRECTIONAL_ACCESS_TO_GOOGLE"
+
+  log_config {
+    aggregation_interval = "INTERVAL_5_SEC"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 # Create a router, which we associate the Cloud NAT too
