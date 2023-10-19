@@ -362,6 +362,18 @@ resource "google_compute_url_map" "default" {
     }
   }
 
+  dynamic "path_matcher" {
+    for_each = var.iap != null ? [1] : []
+    content {
+      name            = "events"
+      default_service = google_compute_backend_service.iap[0].id
+      path_rule {
+        paths   = ["/events"]
+        service = google_compute_backend_service.default.id
+      }
+    }
+  }
+
   # As Atlantis uses the `/metrics` path to expose certain metrics
   # we should make it possible to access it without IAP.
   dynamic "host_rule" {
@@ -375,10 +387,10 @@ resource "google_compute_url_map" "default" {
   dynamic "path_matcher" {
     for_each = var.iap != null ? [1] : []
     content {
-      name            = "events"
+      name            = "metrics"
       default_service = google_compute_backend_service.iap[0].id
       path_rule {
-        paths   = ["/events"]
+        paths   = ["/metrics"]
         service = google_compute_backend_service.default.id
       }
     }
