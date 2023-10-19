@@ -140,6 +140,12 @@ variable "project" {
   default     = null
 }
 
+variable "expose_metrics_publicly" {
+  type        = bool
+  description = "Exposes the /metrics endpoint publicly even if Atlantis is protected by IAP"
+  default     = false
+}
+
 variable "labels" {
   type        = map(any)
   description = "Key-value pairs representing labels attaching to instance & instance template"
