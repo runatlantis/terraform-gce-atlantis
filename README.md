@@ -135,7 +135,7 @@ Once you have the OAuth credentials, you can set the `iap` variable to use them.
 
 ```hcl
 iap = {
-  oauth2_client_id    = data.google_secret_manager_secret_version.atlantis_client_id.secret_data
+  oauth2_client_id     = data.google_secret_manager_secret_version.atlantis_client_id.secret_data
   oauth2_client_secret = data.google_secret_manager_secret_version.atlantis_client_secret.secret_data
 }
 ```
