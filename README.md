@@ -58,6 +58,15 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 - [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 
+
+```hcl
+module "atlantis" {
+  source  = "bschaatsbergen/atlantis/gce"
+  version = "1.3.1"
+  # insert the 7 required variables here
+}
+```
+
 ## How to deploy
 
 See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
@@ -232,8 +241,9 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |
-| <a name="input_shielded_instance_config"></a> [shielded\_instance\_config](#input\_shielded\_instance\_config) | Shielded instance configuration | <pre>object({<br>    enable_integrity_monitoring = bool<br>    enable_vtpm                 = bool<br>    enable_secure_boot          = bool<br>})</pre> | <pre>{<br>  enable_integrity_monitoring = true<br>  enable_vtpm                 = true<br>  enable_secure_boot          = true<br>}</pre> | no |
+| <a name="input_shielded_instance_config"></a> [shielded\_instance\_config](#input\_shielded\_instance\_config) | Shielded VM provides verifiable integrity to prevent against malware and rootkits | <pre>object({<br>    enable_integrity_monitoring = optional(bool)<br>    enable_vtpm                 = optional(bool)<br>    enable_secure_boot          = optional(bool)<br>  })</pre> | <pre>{<br>  "enable_integrity_monitoring": true,<br>  "enable_secure_boot": true,<br>  "enable_vtpm": true<br>}</pre> | no |
 | <a name="input_spot_machine_enabled"></a> [spot\_machine\_enabled](#input\_spot\_machine\_enabled) | A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed | `bool` | `false` | no |
+| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | The SSL policy name that the certificate must follow | `string` | `null` | no |
 | <a name="input_startup_script"></a> [startup\_script](#input\_startup\_script) | A startup script that runs during the boot cycle when you first launch an instance | `string` | `null` | no |
 | <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | Name of the subnetwork to attach a network interface to | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to attach to the instance running Atlantis | `list(string)` | `[]` | no |
