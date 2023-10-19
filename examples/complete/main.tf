@@ -33,9 +33,9 @@ resource "google_project_iam_member" "atlantis_metric_writer" {
 }
 
 resource "google_compute_network" "default" {
-  name                    = "example-network"
-  auto_create_subnetworks = false
-  project                 = local.project_id
+  name                            = "example-network"
+  auto_create_subnetworks         = false
+  project                         = local.project_id
 }
 
 resource "google_compute_subnetwork" "default" {
