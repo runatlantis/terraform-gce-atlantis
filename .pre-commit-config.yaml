@@ -2,6 +2,12 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.74.1
     hooks:
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--compact
+          - --args=--framework=terraform
+          - --args=--skip-check=CKV_TF_1,CKV_GCP_32,CKV_GCP_34
       - id: terraform_fmt
         exclude: ^examples/
       - id: terraform_validate
