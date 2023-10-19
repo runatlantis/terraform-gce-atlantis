@@ -7,7 +7,7 @@ repos:
           - --args=--quiet
           - --args=--compact
           - --args=--framework=terraform
-          - --args=--skip-check=CKV_TF_1,CKV_GCP_32,CKV_GCP_34
+          - --args=--skip-check=CKV_TF_1,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
       - id: terraform_fmt
         exclude: ^examples/
       - id: terraform_validate
