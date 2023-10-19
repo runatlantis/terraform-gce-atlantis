@@ -1,7 +1,7 @@
 locals {
   # The default port that Atlantis runs on is 4141, we default to this.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
-  # Atlantis its home directory is "/home/atlantis", we default to this.
+  # Atlantis' home directory is "/home/atlantis", we default to this.
   atlantis_data_dir             = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
   atlantis_port_name            = "atlantis"
   atlantis_network_traffic_tags = ["atlantis-${random_string.random.result}"]
