@@ -1,12 +1,12 @@
 locals {
-  project_id            = "<your-project-id>"
-  network               = "<your-network>"
-  subnetwork            = "<your-subnetwork>"
-  region                = "<your-region>"
-  zone                  = "<your-zone>"
-  image                 = "<your-image>"
-  domain                = "<example.com>"
-  managed_zone          = "<your-managed-zone>"
+  project_id   = "<your-project-id>"
+  network      = "<your-network>"
+  subnetwork   = "<your-subnetwork>"
+  region       = "<your-region>"
+  zone         = "<your-zone>"
+  image        = "<your-image>"
+  domain       = "<example.com>"
+  managed_zone = "<your-managed-zone>"
 
   github_repo_allow_list = "github.com/example/*"
 }
