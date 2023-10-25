@@ -154,7 +154,7 @@ variable "google_logging_enabled" {
 
 variable "google_logging_use_fluentbit" {
   type        = bool
-  description = "Enable Google Cloud Logging using Fluent Bit ( available from COS 105+ )"
+  description = "Enable Google Cloud Logging using Fluent Bit"
   default     = false
 }
 

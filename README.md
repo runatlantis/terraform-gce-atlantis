@@ -231,7 +231,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
 | <a name="input_expose_metrics_publicly"></a> [expose\_metrics\_publicly](#input\_expose\_metrics\_publicly) | Exposes the /metrics endpoint publicly even if Atlantis is protected by IAP | `bool` | `false` | no |
 | <a name="input_google_logging_enabled"></a> [google\_logging\_enabled](#input\_google\_logging\_enabled) | Enable Google Cloud Logging | `bool` | `true` | no |
-| <a name="input_google_logging_use_fluentbit"></a> [google\_logging\_use\_fluentbit](#input\_google\_logging\_use\_fluentbit) | Enable Google Cloud Logging using Fluent Bit ( available from COS 105+ ) | `bool` | `false` | no |
+| <a name="input_google_logging_use_fluentbit"></a> [google\_logging\_use\_fluentbit](#input\_google\_logging\_use\_fluentbit) | Enable Google Cloud Logging using Fluent Bit | `bool` | `false` | no |
 | <a name="input_google_monitoring_enabled"></a> [google\_monitoring\_enabled](#input\_google\_monitoring\_enabled) | Enable Google Cloud Monitoring | `bool` | `true` | no |
 | <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
