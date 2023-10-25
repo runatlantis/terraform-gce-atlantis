@@ -385,7 +385,7 @@ resource "google_compute_url_map" "default" {
   }
 
   dynamic "path_matcher" {
-    for_each = var.iap != null ? [1] : []
+    for_each = var.iap != null && var.expose_metrics_publicly ? [1] : []
     content {
       name            = "metrics"
       default_service = google_compute_backend_service.iap[0].id
