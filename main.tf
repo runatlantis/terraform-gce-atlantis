@@ -1,11 +1,16 @@
 locals {
-  # The default port that Atlantis runs on is 4141.
+  # The default port that Atlantis runs on is 4141, we default to this.
   atlantis_port = lookup(var.env_vars, "ATLANTIS_PORT", 4141)
-  # Atlantis its home directory is "/home/atlantis".
-  atlantis_data_dir    = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
-  port_name            = "atlantis"
-  network_traffic_tags = ["atlantis-${random_string.random.result}"]
-  labels               = merge(var.labels, { "container-vm" = module.container.vm_container_label })
+  # Atlantis' home directory is "/home/atlantis", we default to this.
+  atlantis_data_dir             = lookup(var.env_vars, "ATLANTIS_DATA_DIR", "/home/atlantis")
+  atlantis_port_name            = "atlantis"
+  atlantis_network_traffic_tags = ["atlantis-${random_string.random.result}"]
+  atlantis_labels = merge(
+    var.labels,
+    module.container.container_vm.labels,
+    { "vm" = module.container.container_vm.name },
+    { "app" = "atlantis" }
+  )
 }
 
 resource "random_string" "random" {
@@ -146,7 +151,12 @@ resource "google_compute_instance_template" "default" {
     boot         = true
     disk_type    = "pd-ssd"
     disk_size_gb = 10
-    labels       = local.labels
+    labels = merge(
+      local.atlantis_labels,
+      {
+        "disk-type" = "boot"
+      },
+    )
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -163,7 +173,12 @@ resource "google_compute_instance_template" "default" {
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
-    labels       = local.labels
+    labels = merge(
+      local.atlantis_labels,
+      {
+        "disk-type" = "data"
+      },
+    )
 
     dynamic "disk_encryption_key" {
       for_each = var.disk_kms_key_self_link != null ? [1] : []
@@ -189,10 +204,8 @@ resource "google_compute_instance_template" "default" {
     scopes = var.service_account.scopes
   }
 
-  tags = concat(local.network_traffic_tags, var.tags)
-
-  labels = local.labels
-
+  tags    = concat(local.atlantis_network_traffic_tags, var.tags)
+  labels  = local.atlantis_labels
   project = var.project
 
   # Instance Templates cannot be updated after creation with the Google Cloud Platform API.
@@ -239,8 +252,12 @@ resource "google_compute_instance_group_manager" "default" {
     instance_template = google_compute_instance_template.default.id
   }
 
+  all_instances_config {
+    labels = local.atlantis_labels
+  }
+
   named_port {
-    name = local.port_name
+    name = local.atlantis_port_name
     port = local.atlantis_port
   }
 
@@ -264,7 +281,8 @@ resource "google_compute_instance_group_manager" "default" {
     max_unavailable_fixed          = 1
     replacement_method             = "RECREATE"
   }
-  project = var.project
+  project  = var.project
+  provider = google-beta
 }
 
 resource "google_compute_global_address" "default" {
@@ -283,7 +301,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
 resource "google_compute_backend_service" "default" {
   name                            = var.name
   protocol                        = "HTTP"
-  port_name                       = local.port_name
+  port_name                       = local.atlantis_port_name
   timeout_sec                     = 10
   connection_draining_timeout_sec = 5
   load_balancing_scheme           = "EXTERNAL_MANAGED"
@@ -306,7 +324,7 @@ resource "google_compute_backend_service" "iap" {
   count                           = var.iap != null ? 1 : 0
   name                            = "${var.name}-iap"
   protocol                        = "HTTP"
-  port_name                       = local.port_name
+  port_name                       = local.atlantis_port_name
   timeout_sec                     = 10
   connection_draining_timeout_sec = 5
   load_balancing_scheme           = "EXTERNAL_MANAGED"
@@ -358,18 +376,26 @@ resource "google_compute_url_map" "default" {
     for_each = var.iap != null ? [1] : []
     content {
       hosts        = [var.domain]
-      path_matcher = "events"
+      path_matcher = "public"
     }
   }
 
   dynamic "path_matcher" {
     for_each = var.iap != null ? [1] : []
     content {
-      name            = "events"
+      name            = "public"
       default_service = google_compute_backend_service.iap[0].id
       path_rule {
         paths   = ["/events"]
         service = google_compute_backend_service.default.id
+      }
+
+      dynamic "path_rule" {
+        for_each = var.expose_metrics_publicly ? [1] : []
+        content {
+          paths   = ["/metrics"]
+          service = google_compute_backend_service.default.id
+        }
       }
     }
   }
@@ -403,7 +429,7 @@ resource "google_compute_route" "public_internet" {
   next_hop_gateway = "default-internet-gateway"
   priority         = 0
   project          = var.project
-  tags             = local.network_traffic_tags
+  tags             = local.atlantis_network_traffic_tags
 }
 
 # This firewall rule allows Google Cloud to issue the health checks
@@ -422,5 +448,5 @@ resource "google_compute_firewall" "lb_health_check" {
     data.google_netblock_ip_ranges.this["legacy-health-checkers"].cidr_blocks_ipv4,
   ))
   project     = var.project
-  target_tags = local.network_traffic_tags
+  target_tags = local.atlantis_network_traffic_tags
 }

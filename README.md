@@ -179,7 +179,8 @@ You can check the status of the certificate in the Google Cloud Console.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
 | <a name="requirement_cloudinit"></a> [cloudinit](#requirement\_cloudinit) | >=2.2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.47.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.79.0 |
+| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >=4.79.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >=3.4.3 |
 
 ## Providers
@@ -187,7 +188,8 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Version |
 |------|---------|
 | <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | >=4.47.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | >=4.79.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | >=4.79.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
 
 ## Modules
@@ -200,6 +202,7 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Type |
 |------|------|
+| [google-beta_google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_instance_group_manager) | resource |
 | [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
@@ -207,7 +210,6 @@ You can check the status of the certificate in the Google Cloud Console.
 | [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule) | resource |
 | [google_compute_health_check.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
 | [google_compute_health_check.default_instance_group_manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check) | resource |
-| [google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group_manager) | resource |
 | [google_compute_instance_template.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template) | resource |
 | [google_compute_managed_ssl_certificate.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate) | resource |
 | [google_compute_route.public_internet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route) | resource |
@@ -227,6 +229,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
 | <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enables OS Login service on the VM | `bool` | `false` | no |
 | <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
+| <a name="input_expose_metrics_publicly"></a> [expose\_metrics\_publicly](#input\_expose\_metrics\_publicly) | Exposes the /metrics endpoint publicly even if Atlantis is protected by IAP | `bool` | `false` | no |
 | <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Key-value pairs representing labels attaching to instance & instance template | `map(any)` | `{}` | no |
