@@ -43,6 +43,8 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 - **Cloud Armor** - Use Google Cloud Armor security policies to protect the default backend service from distributed denial-of-service (DDoS) and other web-based attacks. Security policies can be configured manually, with configurable match conditions and actions in a security policy. Google Cloud Armor also features preconfigured security policies, which cover a variety of use cases.
 
+- **Confidential VM** - A Confidential VM is a type of Compute Engine VM that ensures that your data and applications stay private and encrypted even while in use. You can use a Confidential VM as part of your security strategy so you do not expose sensitive data or workloads during processing. Note that Confidential VM [does not support live migration](https://cloud.google.com/confidential-computing/confidential-vm/docs/error-messages#live_migration_isnt_supported), so if this feature is enabled, `onHostMaintenance` will be set to `TERMINATE`.
+
 ## Prerequisites
 
 This module expects that you already own or create the below resources yourself.

@@ -142,7 +142,7 @@ resource "google_compute_instance_template" "default" {
     automatic_restart           = var.spot_machine_enabled ? false : true
     preemptible                 = var.spot_machine_enabled ? true : false
     provisioning_model          = var.spot_machine_enabled ? "SPOT" : "STANDARD"
-    on_host_maintenance         = var.spot_machine_enabled ? "TERMINATE" : "MIGRATE"
+    on_host_maintenance         = (var.spot_machine_enabled || var.enable_confidential_vm) ? "TERMINATE" : "MIGRATE"
     instance_termination_action = var.spot_machine_enabled ? "STOP" : null
   }
 
@@ -204,6 +204,10 @@ resource "google_compute_instance_template" "default" {
   service_account {
     email  = var.service_account.email
     scopes = var.service_account.scopes
+  }
+
+  confidential_instance_config {
+    enable_confidential_compute = var.enable_confidential_vm
   }
 
   tags    = concat(local.atlantis_network_traffic_tags, var.tags)
