@@ -65,6 +65,18 @@ variable "image" {
   default     = "ghcr.io/runatlantis/atlantis:latest"
 }
 
+variable "command" {
+  type        = list(string)
+  description = "Command to override the container image ENTRYPOINT"
+  default     = null
+}
+
+variable "args" {
+  type        = list(string)
+  description = "Arguments to override the container image default command (CMD)."
+  default     = null
+}
+
 variable "env_vars" {
   type        = map(any)
   description = "Key-value pairs representing environment variables and their respective values"

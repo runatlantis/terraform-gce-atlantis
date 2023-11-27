@@ -94,6 +94,8 @@ module "container" {
       name  = key
       value = value
     }]
+    command = var.command
+    args    = var.args
 
     # Declare volumes to be mounted.
     # This is similar to how docker volumes are declared.
