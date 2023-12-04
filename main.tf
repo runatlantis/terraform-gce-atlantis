@@ -192,7 +192,7 @@ resource "google_compute_instance_template" "default" {
 
   network_interface {
     subnetwork         = var.subnetwork
-    subnetwork_project = var.project
+    subnetwork_project = try(var.shared_vpc.host_project_id, var.project)
   }
 
   shielded_instance_config {
@@ -430,6 +430,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 
 # Route public internet traffic to the default internet gateway
 resource "google_compute_route" "public_internet" {
+  count            = var.shared_vpc == null ? 1 : 0
   network          = var.network
   name             = "${var.name}-public-internet"
   description      = "Custom static route for Altantis to communicate with the public internet"
@@ -442,6 +443,7 @@ resource "google_compute_route" "public_internet" {
 
 # This firewall rule allows Google Cloud to issue the health checks
 resource "google_compute_firewall" "lb_health_check" {
+  count       = var.shared_vpc == null ? 1 : 0
   name        = "${var.name}-lb-health-checks"
   description = "Firewall rule to allow inbound Google Load Balancer health checks to the Atlantis instance"
   priority    = 0
