@@ -169,3 +169,9 @@ variable "labels" {
   description = "Key-value pairs representing labels attaching to instance & instance template"
   default     = {}
 }
+
+variable "default_backend_security_policy" {
+  type        = string
+  description = "Name of the security policy to apply to the default backend service"
+  default     = null
+}

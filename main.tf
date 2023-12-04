@@ -308,6 +308,7 @@ resource "google_compute_backend_service" "default" {
   connection_draining_timeout_sec = 5
   load_balancing_scheme           = "EXTERNAL_MANAGED"
   health_checks                   = [google_compute_health_check.default.id]
+  security_policy                 = var.default_backend_security_policy
 
   log_config {
     enable      = true
