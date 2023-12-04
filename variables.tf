@@ -169,3 +169,9 @@ variable "labels" {
   description = "Key-value pairs representing labels attaching to instance & instance template"
   default     = {}
 }
+
+variable "shared_vpc" {
+  description = "Whether the subnet used by atlantis belongs to a shared VPC or not."
+  type        = bool
+  default     = false
+}
