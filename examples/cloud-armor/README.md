@@ -1,6 +1,6 @@
 # Example usage
 
-This example deploys Cloud Armor to ensure requests to the default backend are coming from GitHub Webhooks.
+This example deploys Cloud Armor to ensure requests to the default backend are coming from GitHub Webhooks, and adds another policy to restrict access to the IAP backend to an example CIDR.
 
 Since IAP is enabled, two backend services will be created:
 

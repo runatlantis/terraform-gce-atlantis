@@ -175,3 +175,9 @@ variable "default_backend_security_policy" {
   description = "Name of the security policy to apply to the default backend service"
   default     = null
 }
+
+variable "iap_backend_security_policy" {
+  type        = string
+  description = "Name of the security policy to apply to the IAP backend service"
+  default     = null
+}

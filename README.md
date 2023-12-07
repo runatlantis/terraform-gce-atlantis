@@ -228,6 +228,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
+| <a name="input_default_backend_security_policy"></a> [default\_backend\_security\_policy](#input\_default\_backend\_security\_policy) | Name of the security policy to apply to the default backend service | `string` | `null` | no |
 | <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
 | <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enables OS Login service on the VM | `bool` | `false` | no |
@@ -237,6 +238,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_google_logging_use_fluentbit"></a> [google\_logging\_use\_fluentbit](#input\_google\_logging\_use\_fluentbit) | Enable Google Cloud Logging using Fluent Bit | `bool` | `false` | no |
 | <a name="input_google_monitoring_enabled"></a> [google\_monitoring\_enabled](#input\_google\_monitoring\_enabled) | Enable Google Cloud Monitoring | `bool` | `true` | no |
 | <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
+| <a name="input_iap_backend_security_policy"></a> [iap\_backend\_security\_policy](#input\_iap\_backend\_security\_policy) | Name of the security policy to apply to the IAP backend service | `string` | `null` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Key-value pairs representing labels attaching to instance & instance template | `map(any)` | `{}` | no |
 | <a name="input_machine_image"></a> [machine\_image](#input\_machine\_image) | The machine image to create VMs with, if not specified, latest cos\_cloud/cos\_stable is used | `string` | `null` | no |
