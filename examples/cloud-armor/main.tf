@@ -59,6 +59,7 @@ module "atlantis" {
   project = local.project_id
 
   default_backend_security_policy = google_compute_security_policy.atlantis.name
+  iap_backend_security_policy     = google_compute_security_policy.atlantis_iap.name
 
   iap = {
     oauth2_client_id     = google_iap_client.atlantis.client_id
@@ -93,6 +94,52 @@ resource "google_compute_security_policy" "atlantis" {
     match {
       expr {
         expression = "(inIpRange(origin.ip, '140.82.112.0/20') || inIpRange(origin.ip, '185.199.108.0/22') || inIpRange(origin.ip, '143.55.64.0/20') || inIpRange(origin.ip, '192.30.252.0/22'))"
+      }
+    }
+  }
+
+  rule {
+    # Deny all by default
+    action      = "deny(403)"
+    priority    = "2147483647"
+    description = "Default rule: deny all"
+
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+  }
+
+  rule {
+    # Log4j vulnerability
+    action      = "deny(403)"
+    priority    = "1"
+    description = "CVE-2021-44228 (https://nvd.nist.gov/vuln/detail/CVE-2021-44228)"
+    match {
+      expr {
+        expression = "evaluatePreconfiguredExpr('cve-canary')"
+      }
+    }
+  }
+}
+
+# This policy allows you to restrict access to the UI from anywhere but say
+# your VPN exits, etc.
+resource "google_compute_security_policy" "atlantis_iap" {
+  name        = "atlantis-iap-security-policy"
+  description = "Policy blocking all traffic except from example range"
+  project     = local.project_id
+
+  rule {
+    # Allow from sample range, eg 192.168.0.0/16
+    action      = "allow"
+    priority    = "2"
+    description = "Allow from sample CIDR"
+    match {
+      expr {
+        expression = "(inIpRange(origin.ip, '192.168.0.0/16'))"
       }
     }
   }
