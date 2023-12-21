@@ -218,4 +218,19 @@ variable "persistent_disk_type" {
   type        = string
   description = "The type of persistent disk that Atlantis uses to store its data on"
   default     = "pd-ssd"
+
+}
+
+variable "autoscaling" {
+  description = "Set schedules so that the instance group only scales up when configured"
+  type = object({
+    schedules = list(object({
+      name         = string
+      description  = string
+      schedule     = string
+      time_zone    = string
+      duration_sec = number
+    }))
+  })
+  default = null
 }

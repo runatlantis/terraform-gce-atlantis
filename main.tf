@@ -175,24 +175,10 @@ resource "google_compute_instance_template" "default" {
 
   #  Persistent disk for Atlantis
   disk {
-    device_name  = "atlantis-disk-0"
-    disk_type    = var.persistent_disk_type
-    mode         = "READ_WRITE"
-    disk_size_gb = var.persistent_disk_size_gb
-    auto_delete  = false
-    labels = merge(
-      local.atlantis_labels,
-      {
-        "disk-type" = "data"
-      },
-    )
-
-    dynamic "disk_encryption_key" {
-      for_each = var.disk_kms_key_self_link != null ? [1] : []
-      content {
-        kms_key_self_link = var.disk_kms_key_self_link
-      }
-    }
+    device_name = "atlantis-disk-0"
+    mode        = "READ_WRITE"
+    source      = google_compute_disk.persistent.name
+    auto_delete = false
   }
 
   network_interface {
@@ -224,6 +210,27 @@ resource "google_compute_instance_template" "default" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "google_compute_disk" "persistent" {
+  name = var.name
+  type = var.persistent_disk_type
+  size = var.persistent_disk_size_gb
+  zone = var.zone
+  labels = merge(
+    local.atlantis_labels,
+    {
+      "disk-type" = "data"
+    },
+  )
+
+  dynamic "disk_encryption_key" {
+    for_each = var.disk_kms_key_self_link != null ? [1] : []
+    content {
+      kms_key_self_link = var.disk_kms_key_self_link
+    }
+  }
+  project = var.project
 }
 
 resource "google_compute_health_check" "default" {
@@ -272,17 +279,13 @@ resource "google_compute_instance_group_manager" "default" {
     port = local.atlantis_port
   }
 
-  stateful_disk {
-    device_name = "atlantis-disk-0"
-    delete_rule = "NEVER"
-  }
-
   auto_healing_policies {
     health_check      = google_compute_health_check.default_instance_group_manager.id
     initial_delay_sec = 30
   }
 
-  target_size = 1
+  # We cannot set target_size when using an autoscaler
+  target_size = var.autoscaling == null ? 1 : null
 
   update_policy {
     type                           = "PROACTIVE"
@@ -294,6 +297,32 @@ resource "google_compute_instance_group_manager" "default" {
   }
   project  = var.project
   provider = google-beta
+}
+
+resource "google_compute_autoscaler" "default" {
+  count = var.autoscaling == null ? 0 : 1
+
+  name   = var.name
+  zone   = var.zone
+  target = google_compute_instance_group_manager.default.id
+
+  autoscaling_policy {
+    max_replicas    = 1 # Allow at most one instance
+    min_replicas    = 0 # Allow scaling down to zero
+    cooldown_period = 60
+
+    dynamic "scaling_schedules" {
+      for_each = var.autoscaling.schedules == null ? [] : var.autoscaling.schedules
+      content {
+        name                  = scaling_schedules.value.name
+        description           = scaling_schedules.value.description
+        min_required_replicas = 1
+        schedule              = scaling_schedules.value.schedule
+        time_zone             = scaling_schedules.value.time_zone
+        duration_sec          = scaling_schedules.value.duration_sec
+      }
+    }
+  }
 }
 
 resource "google_compute_global_address" "default" {
