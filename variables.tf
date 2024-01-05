@@ -187,3 +187,11 @@ variable "enable_confidential_vm" {
   description = "Enable Confidential VM. If true, on host maintenance will be set to TERMINATE"
   default     = false
 }
+
+variable "shared_vpc" {
+  description = "Whether to deploy within a shared VPC"
+  type = object({
+    host_project_id = string
+  })
+  default = null
+}

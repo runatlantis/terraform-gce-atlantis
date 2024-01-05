@@ -63,6 +63,7 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 - [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
 - [Cloud Armor](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/cloud-armor)
+- [Shared VPC](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/shared-vpc)
 
 ```hcl
 module "atlantis" {
