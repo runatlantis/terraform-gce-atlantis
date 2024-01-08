@@ -202,7 +202,7 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | 3.1.0 |
+| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | 3.1.1 |
 
 ## Resources
 
