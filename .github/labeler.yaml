@@ -1,0 +1,20 @@
+github-actions:
+  - changed-files:
+      - any-glob-to-any-file:
+        - '.github/**'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'README.md'
+        - '**/*.md'
+
+legal:
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'LICENSE'
+
+examples:
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'example/**'
