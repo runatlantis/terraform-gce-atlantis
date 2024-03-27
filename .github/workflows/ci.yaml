@@ -1,0 +1,37 @@
+name: ci
+on:
+  - pull_request
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      # Setup dependencies
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      # Run a couple of native Terraform checks
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init
+      - run: terraform fmt -recursive -check
+      - run: terraform validate
+
+      # Checkov
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          quiet: true
+          skip_check: CKV_TF_1,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
+          framework: terraform
+
+      # Terraform-docs
+      - uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          fail-on-diff: true
+          args: --lockfile=false
+          git-push: "true" # automatically push the changes to the branch
+
