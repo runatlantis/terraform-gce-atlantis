@@ -1,17 +1,15 @@
 name: ci
 on:
-  pull_request:
-permissions:
-  contents: read
-defaults:
-  run:
-    shell: bash
+  - pull_request
+
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
       # Setup dependencies
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       # Run a couple of native Terraform checks
       - uses: hashicorp/setup-terraform@v3
@@ -35,3 +33,5 @@ jobs:
           output-method: inject
           fail-on-diff: true
           args: --lockfile=false
+          git-push: "true" # automatically push the changes to the branch
+
