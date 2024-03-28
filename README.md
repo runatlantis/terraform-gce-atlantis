@@ -1,5 +1,7 @@
 # Atlantis on Google Compute Engine
 
+![Header](./static/banner.png)
+
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
 - [Feature highlights](#feature-highlights)
