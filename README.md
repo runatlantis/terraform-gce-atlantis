@@ -1,5 +1,7 @@
 # Atlantis on Google Compute Engine
 
+![Header](./static/banner.png)
+
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
 - [Feature highlights](#feature-highlights)
@@ -53,29 +55,28 @@ This module expects that you already own or create the below resources yourself.
 - Service account
 - Domain
 
-If you prefer an example that includes the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
+If you prefer an example that includes the above resources, see [`complete example`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete).
 
 ## Example Usage
 
 Here are some examples to choose from. Look at the prerequisites above to find one that is appropriate for your configuration.
 
-- [Basic](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic)
-- [Complete](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete)
-- [Secure Environment Variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars)
-- [Cloud Armor](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/cloud-armor)
-- [Shared VPC](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/shared-vpc)
+- [Basic](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/basic)
+- [Complete](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete)
+- [Secure Environment Variables](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars)
+- [Cloud Armor](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/cloud-armor)
+- [Shared VPC](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/shared-vpc)
 
 ```hcl
 module "atlantis" {
-  source  = "bschaatsbergen/atlantis/gce"
-  version = "1.3.1"
+  source  = "runatlantis/atlantis/gce"
   # insert the 7 required variables here
 }
 ```
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/basic/server-atlantis.yaml).
+See [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/basic/main.tf) and the [`server-atlantis.yaml`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/basic/server-atlantis.yaml).
 
 ### Important
 
@@ -103,7 +104,7 @@ For an overview of all possible environment variables, see: [Atlantis Server Con
 
 ### Setting sensitive environment variables
 
-See [secured environment variables](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/secure-env-vars) for an example on how to deal with sensitive values in environment variables.
+See [secured environment variables](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars) for an example on how to deal with sensitive values in environment variables.
 
 ## Service Account
 
@@ -115,7 +116,7 @@ Note that you must grant the relevant permissions to your service account yourse
 
 The `roles/logging.logWriter` & `roles/monitoring.metricWriter` roles should be attached to the service account in order to write logs to Cloud Logging and ingest metric data into Cloud Monitoring.
 
-See [`main.tf`](https://github.com/bschaatsbergen/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L16-L33)
+See [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L16-L33)
 
 ## DNS Record
 
@@ -127,7 +128,7 @@ It's a requirement to add the A record to the domain record set in order to suce
 
 If you use Cloud DNS and own a managed zone for your domain, use the IP address that's part of the module output to create the A record.
 
-See [`main.tf`](https://github.com/bschaatsbergen/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L60-L71)
+See [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/blob/main/examples/basic/main.tf#L60-L71)
 
 ## Identity-Aware Proxy
 

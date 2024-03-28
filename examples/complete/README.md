@@ -14,11 +14,11 @@ This module expects that you already own or create the below resources yourself.
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/server-atlantis.yaml).
+See [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete/main.tf) and the [`server-atlantis.yaml`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete/server-atlantis.yaml).
 
 ### Important
 
-- The [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete/main.tf) contains resources that are set up with only the minimum required attributes to function properly. It is recommended to add additional attributes if you plan to use this in a production environment.
+- The [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete/main.tf) contains resources that are set up with only the minimum required attributes to function properly. It is recommended to add additional attributes if you plan to use this in a production environment.
 
 ## After it's successfully deployed
 
