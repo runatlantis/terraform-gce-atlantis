@@ -70,7 +70,6 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 ```hcl
 module "atlantis" {
   source  = "runatlantis/atlantis/gce"
-  version = "1.3.1"
   # insert the 7 required variables here
 }
 ```
