@@ -22,11 +22,11 @@ This module expects that you already own or create the below resources yourself.
     - target tags: [allow-iap]
     - tcp, port 22
 
-If you prefer an example that includes the above resources, see [`complete example`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/complete).
+If you prefer an example that includes the above resources, see [`complete example`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete).
 
 ## How to deploy
 
-See [`main.tf`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/shared-vpc/main.tf) and the [`server-atlantis.yaml`](https://github.com/bschaatsbergen/atlantis-on-gcp-vm/tree/master/examples/shared-vpc/server-atlantis.yaml).
+See [`main.tf`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/shared-vpc/main.tf) and the [`server-atlantis.yaml`](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/shared-vpc/server-atlantis.yaml).
 
 ## After it's successfully deployed
 

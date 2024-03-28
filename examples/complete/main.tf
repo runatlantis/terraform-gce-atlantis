@@ -75,7 +75,7 @@ resource "google_compute_router_nat" "default" {
 }
 
 module "atlantis" {
-  source     = "bschaatsbergen/atlantis/gce"
+  source     = "runatlantis/atlantis/gce"
   name       = "atlantis"
   network    = google_compute_network.default.name
   subnetwork = google_compute_subnetwork.default.name
