@@ -33,6 +33,7 @@ jobs:
 
       # Terraform-docs
       - uses: terraform-docs/gh-actions@v1.1.0
+        id: terraform-docs
         with:
           working-dir: .
           output-file: README.md
@@ -53,3 +54,15 @@ jobs:
           file_pattern: 'README.md'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Print instructions to run terraform-docs locally if changes are needed and workflow is running on fork
+      - if: ${{ !cancelled() && github.repository_owner != 'runatlantis' && steps.terraform-docs.outputs.num_changed > 0 }}
+        run: |
+          echo '### Please run terraform-docs locally and commit the changes:' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          echo '```sh' >> $GITHUB_STEP_SUMMARY
+          echo 'docker run --rm --volume "$(pwd):/terraform-docs" -u $(id -u) quay.io/terraform-docs/terraform-docs:0.17.0 markdown --output-file README.md --output-mode inject /terraform-docs' >> $GITHUB_STEP_SUMMARY
+          echo 'git add README.md' >> $GITHUB_STEP_SUMMARY
+          echo 'git commit --amend --no-edit' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
