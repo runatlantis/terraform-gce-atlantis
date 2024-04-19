@@ -5,6 +5,11 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
       # Setup dependencies
       - uses: actions/checkout@v4
@@ -34,5 +39,17 @@ jobs:
           output-method: inject
           fail-on-diff: true
           args: --lockfile=false
-          git-push: "true" # automatically push the changes to the branch
+          git-push: 'false'
 
+      # Push Terraform-docs changes
+      - uses: planetscale/ghcommit-action@v0.1.35
+        # Run this step even if previous steps fails (there are changes to commit)
+        # but skip when on forks
+        if: ${{ !cancelled() && github.repository_owner == 'runatlantis' }}
+        with:
+          commit_message: "terraform-docs: automated action"
+          repo: ${{ github.repository }}
+          branch: ${{ github.head_ref || github.ref_name }}
+          file_pattern: 'README.md'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
