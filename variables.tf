@@ -146,6 +146,12 @@ variable "expose_metrics_publicly" {
   default     = false
 }
 
+variable "expose_healthz_publicly" {
+  type        = bool
+  description = "Exposes the /healthz endpoint publicly even if Atlantis is protected by IAP"
+  default     = false
+}
+
 variable "google_logging_enabled" {
   type        = bool
   description = "Enable Google Cloud Logging"

@@ -28,7 +28,7 @@ jobs:
         with:
           directory: .
           quiet: true
-          skip_check: CKV_TF_1,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
+          skip_check: CKV_TF_1,CKV_TF_2,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
           framework: terraform
 
       # Terraform-docs

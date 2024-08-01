@@ -405,6 +405,14 @@ resource "google_compute_url_map" "default" {
           service = google_compute_backend_service.default.id
         }
       }
+
+      dynamic "path_rule" {
+        for_each = var.expose_healthz_publicly ? [1] : []
+        content {
+          paths   = ["/healthz"]
+          service = google_compute_backend_service.default.id
+        }
+      }
     }
   }
 }
