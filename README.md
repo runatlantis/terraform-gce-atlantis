@@ -253,6 +253,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
 | <a name="input_network"></a> [network](#input\_network) | Name of the network | `string` | n/a | yes |
 | <a name="input_persistent_disk_size_gb"></a> [persistent\_disk\_size\_gb](#input\_persistent\_disk\_size\_gb) | The size of the persistent disk that Atlantis uses to store its data on | `number` | `50` | no |
+| <a name="input_persistent_disk_type"></a> [persistent\_disk\_type](#input\_persistent\_disk\_type) | The type of persistent disk that Atlantis uses to store its data on | `string` | `"pd-ssd"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |

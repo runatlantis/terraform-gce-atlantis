@@ -171,7 +171,7 @@ resource "google_compute_instance_template" "default" {
   #  Persistent disk for Atlantis
   disk {
     device_name  = "atlantis-disk-0"
-    disk_type    = "pd-ssd"
+    disk_type    = var.persistent_disk_type
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
