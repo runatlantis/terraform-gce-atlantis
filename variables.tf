@@ -146,6 +146,12 @@ variable "expose_metrics_publicly" {
   default     = false
 }
 
+variable "expose_healthz_publicly" {
+  type        = bool
+  description = "Exposes the /healthz endpoint publicly even if Atlantis is protected by IAP"
+  default     = false
+}
+
 variable "google_logging_enabled" {
   type        = bool
   description = "Enable Google Cloud Logging"
@@ -194,4 +200,10 @@ variable "shared_vpc" {
     host_project_id = string
   })
   default = null
+}
+
+variable "persistent_disk_type" {
+  type        = string
+  description = "The type of persistent disk that Atlantis uses to store its data on"
+  default     = "pd-ssd"
 }

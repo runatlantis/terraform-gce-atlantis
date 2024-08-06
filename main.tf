@@ -173,7 +173,7 @@ resource "google_compute_instance_template" "default" {
   #  Persistent disk for Atlantis
   disk {
     device_name  = "atlantis-disk-0"
-    disk_type    = "pd-ssd"
+    disk_type    = var.persistent_disk_type
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
@@ -404,6 +404,14 @@ resource "google_compute_url_map" "default" {
         for_each = var.expose_metrics_publicly ? [1] : []
         content {
           paths   = ["/metrics"]
+          service = google_compute_backend_service.default.id
+        }
+      }
+
+      dynamic "path_rule" {
+        for_each = var.expose_healthz_publicly ? [1] : []
+        content {
+          paths   = ["/healthz"]
           service = google_compute_backend_service.default.id
         }
       }

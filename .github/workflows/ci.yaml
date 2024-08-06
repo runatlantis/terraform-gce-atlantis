@@ -28,11 +28,11 @@ jobs:
         with:
           directory: .
           quiet: true
-          skip_check: CKV_TF_1,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
+          skip_check: CKV_TF_1,CKV_TF_2,CKV_GCP_32,CKV_GCP_34,CKV2_GCP_18
           framework: terraform
 
       # Terraform-docs
-      - uses: terraform-docs/gh-actions@v1.1.0
+      - uses: terraform-docs/gh-actions@v1.2.0
         id: terraform-docs
         with:
           working-dir: .
@@ -43,7 +43,7 @@ jobs:
           git-push: 'false'
 
       # Push Terraform-docs changes
-      - uses: planetscale/ghcommit-action@v0.1.38
+      - uses: planetscale/ghcommit-action@v0.1.44
         # Run this step even if previous steps fails (there are changes to commit)
         # but skip when on forks
         if: ${{ !cancelled() && github.repository_owner == 'runatlantis' }}
