@@ -201,3 +201,9 @@ variable "shared_vpc" {
   })
   default = null
 }
+
+variable "persistent_disk_type" {
+  type        = string
+  description = "The type of persistent disk that Atlantis uses to store its data on"
+  default     = "pd-ssd"
+}
