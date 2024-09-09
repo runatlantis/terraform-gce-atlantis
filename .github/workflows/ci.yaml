@@ -32,7 +32,7 @@ jobs:
           framework: terraform
 
       # Terraform-docs
-      - uses: terraform-docs/gh-actions@v1.2.0
+      - uses: terraform-docs/gh-actions@v1.2.2
         id: terraform-docs
         with:
           working-dir: .
