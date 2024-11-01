@@ -196,16 +196,16 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | >=4.79.0 |
-| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | >=4.79.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.3.3 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.84.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 5.8.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | 3.1.1 |
+| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | ~> 3.2 |
 
 ## Resources
 
