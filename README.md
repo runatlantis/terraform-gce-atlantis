@@ -187,7 +187,7 @@ You can check the status of the certificate in the Google Cloud Console.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
 | <a name="requirement_cloudinit"></a> [cloudinit](#requirement\_cloudinit) | >=2.2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.79.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >=6.9.0 |
 | <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >=4.79.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >=3.4.3 |
 
@@ -196,7 +196,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Version |
 |------|---------|
 | <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | >=4.79.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | >=6.9.0 |
 | <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | >=4.79.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
 
