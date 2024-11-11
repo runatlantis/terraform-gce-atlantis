@@ -61,7 +61,7 @@ jobs:
           echo '### Please run terraform-docs locally and commit the changes:' >> $GITHUB_STEP_SUMMARY
           echo '' >> $GITHUB_STEP_SUMMARY
           echo '```sh' >> $GITHUB_STEP_SUMMARY
-          echo 'docker run --rm --volume "$(pwd):/terraform-docs" -u $(id -u) quay.io/terraform-docs/terraform-docs:0.17.0 markdown --output-file README.md --output-mode inject /terraform-docs' >> $GITHUB_STEP_SUMMARY
+          echo 'docker run --rm --volume "$(pwd):/terraform-docs" -u $(id -u) quay.io/terraform-docs/terraform-docs markdown --output-file README.md --output-mode inject /terraform-docs' >> $GITHUB_STEP_SUMMARY
           echo 'git add README.md' >> $GITHUB_STEP_SUMMARY
           echo 'git commit --amend --no-edit' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
