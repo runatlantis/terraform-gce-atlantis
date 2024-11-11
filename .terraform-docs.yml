@@ -1,0 +1,5 @@
+settings:
+  # https://github.com/terraform-docs/gh-actions/issues/98
+  # Since we do not commit the lockfile, it has no effect in gh workflows.
+  # Changes local runs to match the gh workflow behavior.
+  lockfile: false
