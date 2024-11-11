@@ -188,7 +188,7 @@ You can check the status of the certificate in the Google Cloud Console.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
 | <a name="requirement_cloudinit"></a> [cloudinit](#requirement\_cloudinit) | >=2.2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >=4.79.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >=6.9.0 |
 | <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >=4.79.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >=3.4.3 |
 
@@ -197,7 +197,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Version |
 |------|---------|
 | <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >=2.2.0 |
-| <a name="provider_google"></a> [google](#provider\_google) | >=4.79.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | >=6.9.0 |
 | <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | >=4.79.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.4.3 |
 
@@ -205,7 +205,7 @@ You can check the status of the certificate in the Google Cloud Console.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | 3.1.1 |
+| <a name="module_container"></a> [container](#module\_container) | terraform-google-modules/container-vm/google | ~> 3.2 |
 
 ## Resources
 
@@ -245,7 +245,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_google_logging_enabled"></a> [google\_logging\_enabled](#input\_google\_logging\_enabled) | Enable Google Cloud Logging | `bool` | `true` | no |
 | <a name="input_google_logging_use_fluentbit"></a> [google\_logging\_use\_fluentbit](#input\_google\_logging\_use\_fluentbit) | Enable Google Cloud Logging using Fluent Bit | `bool` | `false` | no |
 | <a name="input_google_monitoring_enabled"></a> [google\_monitoring\_enabled](#input\_google\_monitoring\_enabled) | Enable Google Cloud Monitoring | `bool` | `true` | no |
-| <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br>    oauth2_client_id     = string<br>    oauth2_client_secret = string<br>  })</pre> | `null` | no |
+| <a name="input_iap"></a> [iap](#input\_iap) | Settings for enabling Cloud Identity Aware Proxy to protect the Atlantis UI | <pre>object({<br/>    oauth2_client_id     = string<br/>    oauth2_client_secret = string<br/>  })</pre> | `null` | no |
 | <a name="input_iap_backend_security_policy"></a> [iap\_backend\_security\_policy](#input\_iap\_backend\_security\_policy) | Name of the security policy to apply to the IAP backend service | `string` | `null` | no |
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Key-value pairs representing labels attaching to instance & instance template | `map(any)` | `{}` | no |
@@ -257,9 +257,9 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_persistent_disk_type"></a> [persistent\_disk\_type](#input\_persistent\_disk\_type) | The type of persistent disk that Atlantis uses to store its data on | `string` | `"pd-ssd"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
-| <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br>    email  = string,<br>    scopes = list(string)<br>  })</pre> | <pre>{<br>  "email": "",<br>  "scopes": [<br>    "cloud-platform"<br>  ]<br>}</pre> | no |
-| <a name="input_shared_vpc"></a> [shared\_vpc](#input\_shared\_vpc) | Whether to deploy within a shared VPC | <pre>object({<br>    host_project_id = string<br>  })</pre> | `null` | no |
-| <a name="input_shielded_instance_config"></a> [shielded\_instance\_config](#input\_shielded\_instance\_config) | Shielded VM provides verifiable integrity to prevent against malware and rootkits | <pre>object({<br>    enable_integrity_monitoring = optional(bool)<br>    enable_vtpm                 = optional(bool)<br>    enable_secure_boot          = optional(bool)<br>  })</pre> | <pre>{<br>  "enable_integrity_monitoring": true,<br>  "enable_secure_boot": true,<br>  "enable_vtpm": true<br>}</pre> | no |
+| <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br/>    email  = string,<br/>    scopes = list(string)<br/>  })</pre> | <pre>{<br/>  "email": "",<br/>  "scopes": [<br/>    "cloud-platform"<br/>  ]<br/>}</pre> | no |
+| <a name="input_shared_vpc"></a> [shared\_vpc](#input\_shared\_vpc) | Whether to deploy within a shared VPC | <pre>object({<br/>    host_project_id = string<br/>  })</pre> | `null` | no |
+| <a name="input_shielded_instance_config"></a> [shielded\_instance\_config](#input\_shielded\_instance\_config) | Shielded VM provides verifiable integrity to prevent against malware and rootkits | <pre>object({<br/>    enable_integrity_monitoring = optional(bool)<br/>    enable_vtpm                 = optional(bool)<br/>    enable_secure_boot          = optional(bool)<br/>  })</pre> | <pre>{<br/>  "enable_integrity_monitoring": true,<br/>  "enable_secure_boot": true,<br/>  "enable_vtpm": true<br/>}</pre> | no |
 | <a name="input_spot_machine_enabled"></a> [spot\_machine\_enabled](#input\_spot\_machine\_enabled) | A Spot VM is discounted Compute Engine capacity that may be preemptively stopped or deleted by Compute Engine if the capacity is needed | `bool` | `false` | no |
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | The SSL policy name that the certificate must follow | `string` | `null` | no |
 | <a name="input_startup_script"></a> [startup\_script](#input\_startup\_script) | A startup script that runs during the boot cycle when you first launch an instance | `string` | `null` | no |

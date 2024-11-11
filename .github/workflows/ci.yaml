@@ -32,7 +32,7 @@ jobs:
           framework: terraform
 
       # Terraform-docs
-      - uses: terraform-docs/gh-actions@v1.2.2
+      - uses: terraform-docs/gh-actions@v1.3.0
         id: terraform-docs
         with:
           working-dir: .
@@ -43,7 +43,7 @@ jobs:
           git-push: 'false'
 
       # Push Terraform-docs changes
-      - uses: planetscale/ghcommit-action@v0.1.45
+      - uses: planetscale/ghcommit-action@v0.2.0
         # Run this step even if previous steps fails (there are changes to commit)
         # but skip when on forks
         if: ${{ !cancelled() && github.repository_owner == 'runatlantis' }}
