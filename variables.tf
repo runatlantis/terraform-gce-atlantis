@@ -25,7 +25,7 @@ variable "zone" {
 
 variable "machine_image" {
   type        = string
-  description = "The machine image to create VMs with, if not specified, latest cos_cloud/cos_stable is used"
+  description = "The machine image to create VMs with, if not specified, latest cos_cloud/cos_stable is used. To pin to one, use the following format: projects/cos-cloud/global/images/cos-stable-109-17800-147-54"
   default     = null
 }
 
