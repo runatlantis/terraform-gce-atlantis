@@ -82,6 +82,8 @@ module "container" {
   source  = "terraform-google-modules/container-vm/google"
   version = "~> 3.2"
 
+  cos_image_name = var.machine_image != null ? element(split("/", var.machine_image), length(split("/", var.machine_image)) - 1) : null
+
   container = {
     image = var.image
     securityContext = {
