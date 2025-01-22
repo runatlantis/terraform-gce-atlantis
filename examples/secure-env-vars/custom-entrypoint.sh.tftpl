@@ -30,7 +30,7 @@ gcloud config set component_manager/disable_update_check true
 gcloud config set metrics/environment github_docker_image
 gcloud --version
 
-gcloud secrets versions access latest --secret="${app_key_secret_name}" > "${key_file_path}" && chmod 400 "${key_file_path}" && chown 100 "${key_file_path}"
+gcloud secrets versions access latest --secret="${app_key_secret_name}" > "${key_file_path}" && chmod 600 "${key_file_path}" && chown 100 "${key_file_path}"
 
 export ATLANTIS_GH_APP_ID=$(gcloud secrets versions access latest --secret="${app_id_secret_name}")
 export ATLANTIS_GH_APP_KEY_FILE="${key_file_path}"
