@@ -36,11 +36,7 @@ Atlantis allows you to configure everything using environment variables. However
 
 ### Setting sensitive environment variables
 
-Use a wrapper Atlantis Docker image to set environment variables that contain sensitive values. See the following examples for more details:
-
-- [**Cloud Build**: pull secrets from Google Secret Manager](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars/cloudbuild.yaml)
-- [**GitHub Actions**: pull secrets from Google Secret Manager](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars/.github/workflows/docker-gcp-secrets.yaml)
-- [**GitHub Actions**: use GitHub secrets](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars/.github/workflows/docker-github-secrets.yaml)
+Use a wrapper Atlantis Docker image to set environment variables that contain sensitive values.
 
 You can export sensitive values in the [`custom-entrypoint.sh.tftpl`](custom-entrypoint.sh.tftpl) script, which will be executed as the container entrypoint.
 This strategy allow us to use the base Atlantis image, and to export environment variables that do not appear in the Console (e.g. ATLANTIS_GH_WEBHOOK_SECRET).
