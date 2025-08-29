@@ -48,6 +48,8 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 - **Confidential VM** - A Confidential VM is a type of Compute Engine VM that ensures that your data and applications stay private and encrypted even while in use. You can use a Confidential VM as part of your security strategy so you do not expose sensitive data or workloads during processing. Note that Confidential VM [does not support live migration](https://cloud.google.com/confidential-computing/confidential-vm/docs/error-messages#live_migration_isnt_supported), so if this feature is enabled, `onHostMaintenance` will be set to `TERMINATE`.
 
+- **Scale to zero** - Use [scaling schedules](https://cloud.google.com/compute/docs/autoscaler/scaling-schedules#schedule_configuration_options) so that the instance group only scales up when configured, and down to zero otherwise. Useful to minimize costs.
+
 ## Prerequisites
 
 This module expects that you already own or create the below resources yourself.
@@ -67,6 +69,7 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 - [Secure Environment Variables](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars)
 - [Cloud Armor](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/cloud-armor)
 - [Shared VPC](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/shared-vpc)
+- [Scale to zero](https://github.com/runatlantis/atlantis-on-gcp-vm/tree/master/examples/autoscaling)
 
 ```hcl
 module "atlantis" {
@@ -213,8 +216,10 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Type |
 |------|------|
 | [google-beta_google_compute_instance_group_manager.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_instance_group_manager) | resource |
+| [google_compute_autoscaler.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_autoscaler) | resource |
 | [google_compute_backend_service.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
 | [google_compute_backend_service.iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service) | resource |
+| [google_compute_disk.persistent](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_disk) | resource |
 | [google_compute_firewall.lb_health_check](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_global_address.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address) | resource |
 | [google_compute_global_forwarding_rule.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule) | resource |
@@ -235,6 +240,7 @@ You can check the status of the certificate in the Google Cloud Console.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_args"></a> [args](#input\_args) | Arguments to override the container image default command (CMD). | `list(string)` | `null` | no |
+| <a name="input_autoscaling"></a> [autoscaling](#input\_autoscaling) | Set schedules so that the instance group only scales up when configured | <pre>object({<br/>    schedules = list(object({<br/>      name         = string<br/>      description  = string<br/>      schedule     = string<br/>      time_zone    = string<br/>      duration_sec = number<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
 | <a name="input_command"></a> [command](#input\_command) | Command to override the container image ENTRYPOINT | `list(string)` | `null` | no |
 | <a name="input_default_backend_security_policy"></a> [default\_backend\_security\_policy](#input\_default\_backend\_security\_policy) | Name of the security policy to apply to the default backend service | `string` | `null` | no |
