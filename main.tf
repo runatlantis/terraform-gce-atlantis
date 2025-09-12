@@ -29,7 +29,6 @@ data "google_compute_image" "cos" {
 data "google_netblock_ip_ranges" "this" {
   for_each = toset([
     "health-checkers",
-    "legacy-health-checkers",
   ])
   range_type = each.key
 }
@@ -469,7 +468,6 @@ resource "google_compute_firewall" "lb_health_check" {
   # These are the source IP ranges for health checks (managed by Google Cloud)
   source_ranges = distinct(concat(
     data.google_netblock_ip_ranges.this["health-checkers"].cidr_blocks_ipv4,
-    data.google_netblock_ip_ranges.this["legacy-health-checkers"].cidr_blocks_ipv4,
   ))
   project     = var.project
   target_tags = local.atlantis_network_traffic_tags
