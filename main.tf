@@ -55,7 +55,7 @@ data "google_compute_image" "cos" {
 }
 
 data "google_compute_image" "cos_arm64" {
-  family  = "cos-arm64"
+  family  = "cos-arm64-stable"
   project = "cos-cloud"
 }
 
