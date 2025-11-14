@@ -31,8 +31,14 @@ variable "machine_image" {
 
 variable "machine_type" {
   type        = string
-  description = "The machine type to run Atlantis on"
+  description = "The machine type to run Atlantis on. Hyperdisk-only families (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk storage and will trigger automatic Hyperdisk disk selection."
   default     = "n2-standard-2"
+}
+
+variable "boot_disk_type" {
+  type        = string
+  description = "Optional override for the boot disk type. Defaults to null so Hyperdisk-only machine types (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) use hyperdisk-balanced automatically and other machine types use pd-ssd."
+  default     = null
 }
 
 variable "persistent_disk_size_gb" {
@@ -216,6 +222,15 @@ variable "shared_vpc" {
 
 variable "persistent_disk_type" {
   type        = string
-  description = "The type of persistent disk that Atlantis uses to store its data on"
+  description = "The type of persistent disk that Atlantis uses to store its data on. Hyperdisk-only machine types (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk families such as hyperdisk-balanced."
   default     = "pd-ssd"
+
+  validation {
+    condition = (
+      length(regexall("^(c4a-|c4d-|h4d-|x4-|m4-|a4x-|a4-|a3-ultragpu-|a3-megagpu-)", lower(var.machine_type))) == 0 ||
+      length(trimspace(coalesce(var.persistent_disk_type, ""))) == 0 ||
+      length(regexall("^pd-", lower(coalesce(var.persistent_disk_type, "")))) == 0
+    )
+    error_message = "Hyperdisk-only machine types (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk disk types (for example hyperdisk-balanced or hyperdisk-extreme)."
+  }
 }

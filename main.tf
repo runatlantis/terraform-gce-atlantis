@@ -12,6 +12,26 @@ locals {
     { "vm" = module.container.container_vm.name },
     { "app" = "atlantis" }
   )
+
+  # Detect Hyperdisk-only machine series (c4a, c4d, h4d, x4, m4, a4x, a4, a3 Ultra, a3 Mega).
+  is_hyperdisk_only_machine = length(
+    regexall(
+      "^(c4a-|c4d-|h4d-|x4-|m4-|a4x-|a4-|a3-ultragpu-|a3-megagpu-)",
+      lower(var.machine_type)
+    )
+  ) > 0
+
+  normalized_persistent_disk_type   = trimspace(coalesce(var.persistent_disk_type, " "))
+  has_user_persistent_disk_override = local.normalized_persistent_disk_type != "" && lower(local.normalized_persistent_disk_type) != "pd-ssd"
+
+  calculated_persistent_disk_type = local.has_user_persistent_disk_override ? var.persistent_disk_type : (
+    local.is_hyperdisk_only_machine ? "hyperdisk-balanced" : "pd-ssd"
+  )
+
+  normalized_boot_disk_type = trimspace(coalesce(var.boot_disk_type, " "))
+  calculated_boot_disk_type = local.normalized_boot_disk_type != "" ? var.boot_disk_type : (
+    local.is_hyperdisk_only_machine ? "hyperdisk-balanced" : "pd-ssd"
+  )
 }
 
 resource "random_string" "random" {
@@ -155,7 +175,7 @@ resource "google_compute_instance_template" "default" {
     source_image = var.machine_image != null ? var.machine_image : data.google_compute_image.cos.self_link
     auto_delete  = true
     boot         = true
-    disk_type    = "pd-ssd"
+    disk_type    = local.calculated_boot_disk_type
     disk_size_gb = 10
     labels = merge(
       local.atlantis_labels,
@@ -175,7 +195,7 @@ resource "google_compute_instance_template" "default" {
   #  Persistent disk for Atlantis
   disk {
     device_name  = "atlantis-disk-0"
-    disk_type    = var.persistent_disk_type
+    disk_type    = local.calculated_persistent_disk_type
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb
     auto_delete  = false
