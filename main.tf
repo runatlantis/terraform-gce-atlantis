@@ -21,6 +21,14 @@ locals {
     )
   ) > 0
 
+  # Detect ARM64 machine types (c4a, a4x, a4, t2a, t2d)
+  is_arm64_machine = length(
+    regexall(
+      "^(c4a-|a4x-|a4-|t2a-|t2d-)",
+      lower(var.machine_type)
+    )
+  ) > 0
+
   normalized_persistent_disk_type   = trimspace(coalesce(var.persistent_disk_type, " "))
   has_user_persistent_disk_override = local.normalized_persistent_disk_type != "" && lower(local.normalized_persistent_disk_type) != "pd-ssd"
 
@@ -43,6 +51,11 @@ resource "random_string" "random" {
 
 data "google_compute_image" "cos" {
   family  = "cos-stable"
+  project = "cos-cloud"
+}
+
+data "google_compute_image" "cos_arm64" {
+  family  = "cos-arm64"
   project = "cos-cloud"
 }
 
@@ -172,7 +185,9 @@ resource "google_compute_instance_template" "default" {
 
   # Ephemeral OS boot disk
   disk {
-    source_image = var.machine_image != null ? var.machine_image : data.google_compute_image.cos.self_link
+    source_image = var.machine_image != null ? var.machine_image : (
+      local.is_arm64_machine ? data.google_compute_image.cos_arm64.self_link : data.google_compute_image.cos.self_link
+    )
     auto_delete  = true
     boot         = true
     disk_type    = local.calculated_boot_disk_type
