@@ -16,16 +16,16 @@ The disk-selection logic lives in `locals` and can be evaluated without contacti
 
 ```sh
 # Hyperdisk-only machine (auto-selection should be hyperdisk-balanced)
-terraform console -var 'machine_type=c4a-standard-4' <<< 'local.calculated_persistent_disk_type'
+terraform console -var 'machine_type=c4d-standard-4' <<< 'local.calculated_persistent_disk_type'
 
 # Standard machine (should remain pd-ssd)
 terraform console -var 'machine_type=n2-standard-2' <<< 'local.calculated_persistent_disk_type'
 
 # Explicit Hyperdisk override for both boot + persistent disks
-terraform console -var 'machine_type=c4a-standard-4' -var 'persistent_disk_type=hyperdisk-extreme' -var 'boot_disk_type=hyperdisk-extreme' <<< 'local.calculated_boot_disk_type'
+terraform console -var 'machine_type=c4d-standard-4' -var 'persistent_disk_type=hyperdisk-extreme' -var 'boot_disk_type=hyperdisk-extreme' <<< 'local.calculated_boot_disk_type'
 
 # Loop through all Hyperdisk-only families if you need extra confidence
-for t in c4a-standard-4 c4d-standard-4 h4d-standard-4 x4-standard-4 m4-standard-4 a4x-standard-4 a4-standard-4 a3-ultragpu-8g a3-megagpu-16g; do
+for t in c4d-standard-4 h4d-standard-4 x4-standard-4 m4-standard-4 a3-ultragpu-8g a3-megagpu-16g; do
   terraform console -var "machine_type=$t" <<< 'local.calculated_persistent_disk_type'
 done
 ```
@@ -36,10 +36,13 @@ The `persistent_disk_type` variable prevents pairing Hyperdisk-only machine type
 
 ```sh
 # Should fail: pd-ssd on a Hyperdisk machine
-terraform plan -var 'machine_type=c4a-standard-4' -var 'persistent_disk_type=pd-ssd'
+terraform plan -var 'machine_type=c4d-standard-4' -var 'persistent_disk_type=pd-ssd'
 
 # Should pass: Hyperdisk override
-terraform plan -var 'machine_type=c4a-standard-4' -var 'persistent_disk_type=hyperdisk-extreme'
+terraform plan -var 'machine_type=c4d-standard-4' -var 'persistent_disk_type=hyperdisk-extreme'
+
+# Should fail: ARM64 machine type
+terraform plan -var 'machine_type=c4a-standard-4'
 ```
 
 Running these steps after any related change ensures the Hyperdisk detection, overrides, and validation logic continue working until a formal automated suite is added.

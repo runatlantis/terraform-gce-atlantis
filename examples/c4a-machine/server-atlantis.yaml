@@ -1,6 +1,0 @@
-repos:
-- id: /.*/
-  apply_requirements: [mergeable]
-  allowed_overrides: [apply_requirements, workflow]
-  allow_custom_workflows: true
-  delete_source_branch_on_merge: true

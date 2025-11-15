@@ -43,7 +43,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 - **Separate Persistent Data Disk** - The VM instance has a separate attached persistent data disk attached to it to ensure that Atlantis data is persisted and not lost if the VM is deleted or terminated.
 
-- **Hyperdisk auto-detection** - Hyperdisk-only machine families (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) are detected automatically so both boot and persistent disks default to Hyperdisk-balanced while still allowing explicit Hyperdisk overrides.
+- **Hyperdisk auto-detection** - Hyperdisk-only machine families (C4D, H4D, X4, M4, A3 Ultra, A3 Mega) are detected automatically so both boot and persistent disks default to Hyperdisk-balanced while still allowing explicit Hyperdisk overrides.
 
 - **Shielded VM** - A Shielded VM is a VM that's hardened by a set of security controls that help defend against rootkits and bootkits. Using a Shielded VM helps protect enterprise workloads from threats like remote attacks, privilege escalation, and malicious insiders.
 
@@ -53,11 +53,11 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 ## Hyperdisk Support
 
-Hyperdisk storage is required for the following machine series: **C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, and A3 Mega**. The module automatically detects these machine types and switches both the boot disk and persistent data disk to `hyperdisk-balanced` when no override is provided, so Hyperdisk-only workloads work out of the box.
+Hyperdisk storage is required for the following machine series: **C4D, H4D, X4, M4, A3 Ultra, and A3 Mega**. The module automatically detects these machine types and switches both the boot disk and persistent data disk to `hyperdisk-balanced` when no override is provided, so Hyperdisk-only workloads work out of the box.
 
 To force a different Hyperdisk flavor you can set `persistent_disk_type` or the new `boot_disk_type` variable to values such as `hyperdisk-extreme`. The `persistent_disk_type` validation prevents `pd-*` disks from being combined with the Hyperdisk-only families, which helps catch mistakes early.
 
-See [`examples/c4a-machine`](examples/c4a-machine) for a complete configuration using the `c4a-standard-4` machine type along with guidance on optional overrides.
+**Note:** ARM64 machine types (C4A, A4X, A4, T2A, T2D) are **not supported** because Atlantis does not run on ARM64 architecture. Please use x86-64 machine types instead.
 
 ## Prerequisites
 
@@ -77,7 +77,6 @@ Here are some examples to choose from. Look at the prerequisites above to find o
 - [Complete](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/complete)
 - [Secure Environment Variables](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/secure-env-vars)
 - [Cloud Armor](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/cloud-armor)
-- [C4A Hyperdisk](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/c4a-machine)
 - [Shared VPC](https://github.com/runatlantis/terraform-gce-atlantis/tree/master/examples/shared-vpc)
 
 ```hcl
@@ -181,7 +180,9 @@ resource "google_iap_web_iam_member" "member" {
 
 ### Which machine types require Hyperdisk?
 
-Google currently requires Hyperdisk storage for C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, and A3 Mega machine types. This module detects those families automatically so the boot and persistent disks default to `hyperdisk-balanced`. You can still set `persistent_disk_type` or `boot_disk_type` to another Hyperdisk flavor (for example `hyperdisk-extreme`) when you need higher throughput.
+Google currently requires Hyperdisk storage for C4D, H4D, X4, M4, A3 Ultra, and A3 Mega machine types. This module detects those families automatically so the boot and persistent disks default to `hyperdisk-balanced`. You can still set `persistent_disk_type` or `boot_disk_type` to another Hyperdisk flavor (for example `hyperdisk-extreme`) when you need higher throughput.
+
+**Note:** ARM64 machine types (C4A, A4X, A4, T2A, T2D) are not supported.
 
 ### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error
 

@@ -33,6 +33,13 @@ variable "machine_type" {
   type        = string
   description = "The machine type to run Atlantis on. Hyperdisk-only families (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk storage and will trigger automatic Hyperdisk disk selection."
   default     = "n2-standard-2"
+
+  validation {
+    condition = (
+      length(regexall("^(c4a-|a4x-|a4-|t2a-|t2d-)", lower(var.machine_type))) == 0
+    )
+    error_message = "ARM64 machine types (C4A, A4X, A4, T2A, T2D) are not supported because Atlantis does not run on ARM64 architecture. Please use an x86-64 machine type instead."
+  }
 }
 
 variable "boot_disk_type" {
