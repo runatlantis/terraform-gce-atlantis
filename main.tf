@@ -8,10 +8,11 @@ locals {
   atlantis_network_traffic_tags = ["atlantis-${random_string.random.result}"]
   atlantis_labels = merge(
     var.labels,
-    module.container.container_vm.labels,
-    { "vm" = module.container.container_vm.name },
     { "app" = "atlantis" }
   )
+  atlantis_persistent_disk_name = "atlantis-disk-0"
+  atlantis_disk_mount_path      = "/mnt/disks/gce-containers-mounts/gce-persistent-disks/${local.atlantis_persistent_disk_name}"
+  atlantis_uid                  = 100
 }
 
 resource "random_string" "random" {
@@ -38,7 +39,20 @@ data "cloudinit_config" "config" {
   base64_encode = false
 
   part {
-    filename     = "atlantis-chown-disk.service"
+    filename     = "runcmda"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      runcmd = [
+        "systemctl daemon-reload",
+        "systemctl start --no-block atlantis-chown-disk.service",
+        "systemctl start --no-block atlantis.service"
+      ]
+    })
+  }
+
+  part {
+    filename     = "services"
     content_type = "text/cloud-config"
     content = yamlencode({
       write_files = [
@@ -49,10 +63,32 @@ data "cloudinit_config" "config" {
           content     = <<EOF
           [Unit]
           Description=Change ownership of the mount path to the Atlantis uid
-          Wants=konlet-startup.service
-          After=konlet-startup.service
+          Wants=docker.service
+          After=docker.service
           [Service]
-          ExecStart=/bin/chown 100 /mnt/disks/gce-containers-mounts/gce-persistent-disks/atlantis-disk-0
+          ExecStart=/bin/chown ${local.atlantis_uid} ${local.atlantis_disk_mount_path}
+          Restart=on-failure
+          RestartSec=30
+          StandardOutput=journal+console
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+        },
+        # https://cloud.google.com/container-optimized-os/docs/how-to/create-configure-instance#use-cloud-init
+        # we are specifying `--publish 0.0.0.0` since `--network host` was binding to an ipv6 port.
+        {
+          path        = "/etc/systemd/system/atlantis.service"
+          permissions = "0644"
+          owner       = "root"
+          content     = <<EOF
+          [Unit]
+          Description=Start atlantis container
+          Wants=atlantis-chown-disk.service
+          After=atlantis-chown-disk.service
+          [Service]
+          ExecStart=/usr/bin/docker run -u ${local.atlantis_uid} --rm --publish '0.0.0.0:${local.atlantis_port}:${local.atlantis_port}' -v ${local.atlantis_disk_mount_path}:${local.atlantis_data_dir} %{for key, value in var.env_vars} -e '${key}=${value}'%{endfor} --name=atlantis ${var.image} ${join(" ", var.command)} ${join(" ", var.args)}
+          ExecStop=/usr/bin/docker stop atlantis
+          ExecStopPost=/usr/bin/docker rm atlantis
           Restart=on-failure
           RestartSec=30
           StandardOutput=journal+console
@@ -63,62 +99,6 @@ data "cloudinit_config" "config" {
       ]
     })
   }
-
-  part {
-    filename     = "runcmda"
-    content_type = "text/cloud-config"
-    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
-    content = yamlencode({
-      runcmd = [
-        "systemctl daemon-reload",
-        "systemctl start --no-block atlantis-chown-disk.service"
-      ]
-    })
-  }
-}
-
-module "container" {
-  source  = "terraform-google-modules/container-vm/google"
-  version = "~> 3.2"
-
-  cos_image_name = var.machine_image != null ? element(split("/", var.machine_image), length(split("/", var.machine_image)) - 1) : null
-
-  container = {
-    image = var.image
-    securityContext = {
-      privileged = false
-    }
-    tty = true
-    env = [for key, value in var.env_vars : {
-      name  = key
-      value = value
-    }]
-    command = var.command
-    args    = var.args
-
-    # Declare volumes to be mounted.
-    # This is similar to how docker volumes are declared.
-    volumeMounts = [
-      {
-        mountPath = local.atlantis_data_dir
-        name      = "atlantis-disk-0"
-        readOnly  = false
-      },
-    ]
-  }
-
-  volumes = [
-    {
-      name = "atlantis-disk-0"
-
-      gcePersistentDisk = {
-        pdName = "atlantis-disk-0"
-        fsType = "ext4"
-      }
-    },
-  ]
-
-  restart_policy = "Always"
 }
 
 resource "google_compute_instance_template" "default" {
@@ -131,7 +111,6 @@ resource "google_compute_instance_template" "default" {
   metadata_startup_script = var.startup_script
 
   metadata = {
-    gce-container-declaration    = module.container.metadata_value
     user-data                    = data.cloudinit_config.config.rendered
     google-logging-enabled       = var.google_logging_enabled
     google-monitoring-enabled    = var.google_monitoring_enabled
@@ -174,7 +153,7 @@ resource "google_compute_instance_template" "default" {
 
   #  Persistent disk for Atlantis
   disk {
-    device_name  = "atlantis-disk-0"
+    device_name  = local.atlantis_persistent_disk_name
     disk_type    = var.persistent_disk_type
     mode         = "READ_WRITE"
     disk_size_gb = var.persistent_disk_size_gb

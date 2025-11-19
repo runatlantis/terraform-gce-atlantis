@@ -68,13 +68,13 @@ variable "image" {
 variable "command" {
   type        = list(string)
   description = "Command to override the container image ENTRYPOINT"
-  default     = null
+  default     = []
 }
 
 variable "args" {
   type        = list(string)
   description = "Arguments to override the container image default command (CMD)."
-  default     = null
+  default     = []
 }
 
 variable "env_vars" {
