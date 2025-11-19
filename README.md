@@ -6,6 +6,7 @@
 This Terraform module deploys various resources to run Atlantis on Google Compute Engine.
 
 - [Feature highlights](#feature-highlights)
+- [Hyperdisk Support](#hyperdisk-support)
 - [Prerequisites](#prerequisites)
 - [Example Usage](#example-usage)
   - [Basic](examples/basic)
@@ -42,11 +43,21 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 - **Separate Persistent Data Disk** - The VM instance has a separate attached persistent data disk attached to it to ensure that Atlantis data is persisted and not lost if the VM is deleted or terminated.
 
+- **Hyperdisk auto-detection** - Hyperdisk-only machine families (C4D, H4D, X4, M4, A3 Ultra, A3 Mega) are detected automatically so both boot and persistent disks default to Hyperdisk-balanced while still allowing explicit Hyperdisk overrides.
+
 - **Shielded VM** - A Shielded VM is a VM that's hardened by a set of security controls that help defend against rootkits and bootkits. Using a Shielded VM helps protect enterprise workloads from threats like remote attacks, privilege escalation, and malicious insiders.
 
 - **Cloud Armor** - Use Google Cloud Armor security policies to protect the default backend service from distributed denial-of-service (DDoS) and other web-based attacks. Security policies can be configured manually, with configurable match conditions and actions in a security policy. Google Cloud Armor also features preconfigured security policies, which cover a variety of use cases.
 
 - **Confidential VM** - A Confidential VM is a type of Compute Engine VM that ensures that your data and applications stay private and encrypted even while in use. You can use a Confidential VM as part of your security strategy so you do not expose sensitive data or workloads during processing. Note that Confidential VM [does not support live migration](https://cloud.google.com/confidential-computing/confidential-vm/docs/error-messages#live_migration_isnt_supported), so if this feature is enabled, `onHostMaintenance` will be set to `TERMINATE`.
+
+## Hyperdisk Support
+
+Hyperdisk storage is required for the following machine series: **C4D, H4D, X4, M4, A3 Ultra, and A3 Mega**. The module automatically detects these machine types and switches both the boot disk and persistent data disk to `hyperdisk-balanced` when no override is provided, so Hyperdisk-only workloads work out of the box.
+
+To force a different Hyperdisk flavor you can set `persistent_disk_type` or the new `boot_disk_type` variable to values such as `hyperdisk-extreme`. The `persistent_disk_type` validation prevents `pd-*` disks from being combined with the Hyperdisk-only families, which helps catch mistakes early.
+
+**Note:** ARM64 machine types (C4A, A4X, A4, T2A, T2D) are **not supported** because Atlantis does not run on ARM64 architecture. Please use x86-64 machine types instead.
 
 ## Prerequisites
 
@@ -167,6 +178,12 @@ resource "google_iap_web_iam_member" "member" {
 
 ## FAQ
 
+### Which machine types require Hyperdisk?
+
+Google currently requires Hyperdisk storage for C4D, H4D, X4, M4, A3 Ultra, and A3 Mega machine types. This module detects those families automatically so the boot and persistent disks default to `hyperdisk-balanced`. You can still set `persistent_disk_type` or `boot_disk_type` to another Hyperdisk flavor (for example `hyperdisk-extreme`) when you need higher throughput.
+
+**Note:** ARM64 machine types (C4A, A4X, A4, T2A, T2D) are not supported.
+
 ### When sending an HTTP request, I'm receiving an ERR_EMPTY_RESPONSE error
 
 We expect you to use HTTPS because we are not routing or redirecting any HTTP requests.
@@ -236,6 +253,7 @@ You can check the status of the certificate in the Google Cloud Console.
 |------|-------------|------|---------|:--------:|
 | <a name="input_args"></a> [args](#input\_args) | Arguments to override the container image default command (CMD). | `list(string)` | `null` | no |
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
+| <a name="input_boot_disk_type"></a> [boot\_disk\_type](#input\_boot\_disk\_type) | Optional override for the boot disk type. Defaults to null so Hyperdisk-only machine types (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) use hyperdisk-balanced automatically and other machine types use pd-ssd. | `string` | `null` | no |
 | <a name="input_command"></a> [command](#input\_command) | Command to override the container image ENTRYPOINT | `list(string)` | `null` | no |
 | <a name="input_default_backend_security_policy"></a> [default\_backend\_security\_policy](#input\_default\_backend\_security\_policy) | Name of the security policy to apply to the default backend service | `string` | `null` | no |
 | <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
@@ -253,11 +271,11 @@ You can check the status of the certificate in the Google Cloud Console.
 | <a name="input_image"></a> [image](#input\_image) | Docker image. This is most often a reference to a container located in a container registry | `string` | `"ghcr.io/runatlantis/atlantis:latest"` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Key-value pairs representing labels attaching to instance & instance template | `map(any)` | `{}` | no |
 | <a name="input_machine_image"></a> [machine\_image](#input\_machine\_image) | The machine image to create VMs with, if not specified, latest cos\_cloud/cos\_stable is used. To pin to one, use the following format: projects/cos-cloud/global/images/cos-stable-109-17800-147-54 | `string` | `null` | no |
-| <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on | `string` | `"n2-standard-2"` | no |
+| <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on. Hyperdisk-only families (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk storage and will trigger automatic Hyperdisk disk selection. | `string` | `"n2-standard-2"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
 | <a name="input_network"></a> [network](#input\_network) | Name of the network | `string` | n/a | yes |
 | <a name="input_persistent_disk_size_gb"></a> [persistent\_disk\_size\_gb](#input\_persistent\_disk\_size\_gb) | The size of the persistent disk that Atlantis uses to store its data on | `number` | `50` | no |
-| <a name="input_persistent_disk_type"></a> [persistent\_disk\_type](#input\_persistent\_disk\_type) | The type of persistent disk that Atlantis uses to store its data on | `string` | `"pd-ssd"` | no |
+| <a name="input_persistent_disk_type"></a> [persistent\_disk\_type](#input\_persistent\_disk\_type) | The type of persistent disk that Atlantis uses to store its data on. Hyperdisk-only machine types (C4A, C4D, H4D, X4, M4, A4X, A4, A3 Ultra, A3 Mega) require Hyperdisk families such as hyperdisk-balanced. | `string` | `"pd-ssd"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region that resources should be created in | `string` | n/a | yes |
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Service account to attach to the instance running Atlantis | <pre>object({<br/>    email  = string,<br/>    scopes = list(string)<br/>  })</pre> | <pre>{<br/>  "email": "",<br/>  "scopes": [<br/>    "cloud-platform"<br/>  ]<br/>}</pre> | no |
