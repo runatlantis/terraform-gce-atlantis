@@ -39,6 +39,25 @@ data "cloudinit_config" "config" {
   base64_encode = false
 
   part {
+    # https://docs.cloud.google.com/compute/docs/disks/format-mount-disk-linux
+    # https://docs.cloud.google.com/container-optimized-os/docs/concepts/disks-and-filesystem#mounting_and_formatting_disks
+    filename     = "bootcmd"
+    content_type = "text/cloud-config"
+    merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
+    content = yamlencode({
+      bootcmd = [
+        # Format disk if not already formatted
+        "/sbin/blkid /dev/disk/by-id/google-${local.atlantis_persistent_disk_name} --probe --match-types ext4 || mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-${local.atlantis_persistent_disk_name}",
+        # Check and repair filesystem
+        "/sbin/fsck.ext4 -tvy /dev/disk/by-id/google-${local.atlantis_persistent_disk_name}",
+        # Create mount point and mount the disk
+        "mkdir -p ${local.atlantis_disk_mount_path}",
+        "mount -t ext4 -o discard,defaults /dev/disk/by-id/google-${local.atlantis_persistent_disk_name} ${local.atlantis_disk_mount_path}"
+      ]
+    })
+  }
+
+  part {
     filename     = "runcmda"
     content_type = "text/cloud-config"
     merge_type   = "list(append)+dict(no_replace, recurse_list)+str()"
