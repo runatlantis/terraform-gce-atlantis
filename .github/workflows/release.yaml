@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branch:
+      - main
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Do not run release workflow on forks
+    if: github.repository_owner == 'runatlantis'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set correct Node.js version
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v5
+        with:
+          semantic_version: 25.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
