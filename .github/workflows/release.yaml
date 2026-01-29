@@ -6,6 +6,11 @@ on:
     branch:
       - main
 
+permissions:
+  contents: write
+  metadata: read
+  pull-requests: write
+  statuses: read
 jobs:
   release:
     name: Release
@@ -29,4 +34,4 @@ jobs:
         with:
           semantic_version: 25.0.2
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
