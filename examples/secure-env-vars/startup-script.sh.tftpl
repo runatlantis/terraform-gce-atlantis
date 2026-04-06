@@ -3,7 +3,7 @@
 set -e
 
 # cloud-init executes after the startup script, so we need to wait until the disk is mounted
-timeout 1m bash -c 'until /bin/findmnt -t ext4 -T ${mount_folder}'
+timeout 1m bash -c "until /bin/findmnt -t ext4 -T ${mount_folder}; do sleep 1; done"
 
 # if timeout failed, print msg
 if [ $? -ne 0 ]; then
