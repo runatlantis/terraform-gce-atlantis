@@ -2,7 +2,15 @@
 
 set -e
 
-mkdir -p ${mount_folder}
+# cloud-init executes after the startup script, so we need to wait until the disk is mounted
+timeout 1m bash -c "until /bin/findmnt -t ext4 -T ${mount_folder}; do sleep 1; done"
+
+# if timeout failed, print msg
+if [ $? -ne 0 ]; then
+  echo "Error: Disk not mounted at ${mount_folder} within timeout period"
+  echo "Please rerun this script: 'google_metadata_script_runner startup'"
+fi 
+
 chown 100 ${mount_folder}
 cat <<'EOF' > "${mount_folder}/${entrypoint_filename}"
 #!/bin/bash
