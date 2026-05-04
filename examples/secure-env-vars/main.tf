@@ -60,7 +60,7 @@ module "atlantis" {
   command = ["/home/atlantis/custom-entrypoint.sh"]
   args    = ["server"]
 
-  startup_script = templatefile("${path.module}/custom-entrypoint.sh.tftpl", {
+  startup_script = templatefile("${path.module}/startup-script.sh.tftpl", {
     cloud_sdk_version          = "455.0.0"
     app_key_secret_name        = local.secret_names.app_key
     app_id_secret_name         = local.secret_names.app_id
