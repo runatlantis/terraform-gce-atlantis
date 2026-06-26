@@ -18,7 +18,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       # Run a couple of native Terraform checks
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
       - run: terraform init
       - run: terraform fmt -recursive -check
       - run: terraform validate
@@ -43,7 +43,7 @@ jobs:
           git-push: 'false'
 
       # Push Terraform-docs changes
-      - uses: planetscale/ghcommit-action@v0.2.19
+      - uses: planetscale/ghcommit-action@v0.2.20
         # Run this step even if previous steps fails (there are changes to commit)
         # but skip when on forks
         if: ${{ !cancelled() && github.repository_owner == 'runatlantis' }}
