@@ -233,6 +233,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_args"></a> [args](#input\_args) | Arguments to override the container image default command (CMD). | `list(string)` | `[]` | no |
+| <a name="input_auto_healing_initial_delay_sec"></a> [auto\_healing\_initial\_delay\_sec](#input\_auto\_healing\_initial\_delay\_sec) | Seconds after an instance starts before the autohealer acts on health check results. Must exceed the time the startup script and the first container image pull need to start answering on the health check port, or a slow-but-healthy boot is recreated before it can finish. | `number` | `30` | no |
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
 | <a name="input_command"></a> [command](#input\_command) | Command to override the container image ENTRYPOINT | `list(string)` | `[]` | no |
 | <a name="input_default_backend_security_policy"></a> [default\_backend\_security\_policy](#input\_default\_backend\_security\_policy) | Name of the security policy to apply to the default backend service | `string` | `null` | no |
