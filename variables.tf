@@ -158,6 +158,17 @@ variable "expose_metrics_publicly" {
   default     = false
 }
 
+variable "auto_healing_initial_delay_sec" {
+  type        = number
+  description = "Seconds after an instance starts before the autohealer acts on health check results. Must exceed the time the startup script and the first container image pull need to start answering on the health check port, or a slow-but-healthy boot is recreated before it can finish."
+  default     = 30
+
+  validation {
+    condition     = var.auto_healing_initial_delay_sec >= 0 && var.auto_healing_initial_delay_sec <= 3600
+    error_message = "auto_healing_initial_delay_sec must be between 0 and 3600 seconds."
+  }
+}
+
 variable "expose_healthz_publicly" {
   type        = bool
   description = "Exposes the /healthz endpoint publicly even if Atlantis is protected by IAP"
