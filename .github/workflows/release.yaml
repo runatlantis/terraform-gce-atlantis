@@ -32,6 +32,6 @@ jobs:
       - name: Release
         uses: cycjimmy/semantic-release-action@v6.0.0
         with:
-          semantic_version: 25.0.2
+          semantic_version: 25.0.9
         env:
           GITHUB_TOKEN: ${{ github.token }}
