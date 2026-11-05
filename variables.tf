@@ -202,8 +202,36 @@ variable "iap_backend_security_policy" {
 
 variable "enable_confidential_vm" {
   type        = bool
-  description = "Enable Confidential VM. If true, on host maintenance will be set to TERMINATE"
+  description = "Enable Confidential VM. On host maintenance defaults to TERMINATE, unless `on_host_maintenance` is set to MIGRATE and the confidential instance type supports live migration (SEV on supported machine types, e.g. n2d with AMD Milan)"
   default     = false
+}
+
+variable "confidential_instance_type" {
+  type        = string
+  description = "The confidential computing technology the instance uses, e.g. SEV. Required, together with `min_cpu_platform` and `on_host_maintenance = \"MIGRATE\"`, to live-migrate SEV Confidential VMs on N2D or C3D instead of terminating them on host maintenance. SEV_SNP and TDX still require TERMINATE"
+  default     = null
+
+  validation {
+    condition     = var.confidential_instance_type == null ? true : contains(["SEV", "SEV_SNP", "TDX"], var.confidential_instance_type)
+    error_message = "confidential_instance_type must be null, \"SEV\", \"SEV_SNP\" or \"TDX\"."
+  }
+}
+
+variable "min_cpu_platform" {
+  type        = string
+  description = "The minimum CPU platform for the instance. Required for SEV live migration (AMD Milan on N2D, AMD Genoa on C3D) and for SEV_SNP (AMD Milan)"
+  default     = null
+}
+
+variable "on_host_maintenance" {
+  type        = string
+  description = "The behaviour of the VM during Compute Engine host maintenance, MIGRATE or TERMINATE. When null, the module default applies: TERMINATE for Confidential VMs, MIGRATE otherwise. Spot VMs always use TERMINATE"
+  default     = null
+
+  validation {
+    condition     = var.on_host_maintenance == null ? true : contains(["MIGRATE", "TERMINATE"], var.on_host_maintenance)
+    error_message = "on_host_maintenance must be null, \"MIGRATE\" or \"TERMINATE\"."
+  }
 }
 
 variable "shared_vpc" {

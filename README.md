@@ -46,7 +46,7 @@ This Terraform module deploys various resources to run Atlantis on Google Comput
 
 - **Cloud Armor** - Use Google Cloud Armor security policies to protect the default backend service from distributed denial-of-service (DDoS) and other web-based attacks. Security policies can be configured manually, with configurable match conditions and actions in a security policy. Google Cloud Armor also features preconfigured security policies, which cover a variety of use cases.
 
-- **Confidential VM** - A Confidential VM is a type of Compute Engine VM that ensures that your data and applications stay private and encrypted even while in use. You can use a Confidential VM as part of your security strategy so you do not expose sensitive data or workloads during processing. Note that Confidential VM [does not support live migration](https://cloud.google.com/confidential-computing/confidential-vm/docs/error-messages#live_migration_isnt_supported), so if this feature is enabled, `onHostMaintenance` will be set to `TERMINATE`.
+- **Confidential VM** - A Confidential VM is a type of Compute Engine VM that ensures that your data and applications stay private and encrypted even while in use. You can use a Confidential VM as part of your security strategy so you do not expose sensitive data or workloads during processing. By default `onHostMaintenance` is set to `TERMINATE` for Confidential VMs, because not every Confidential VM configuration supports live migration. SEV Confidential VMs on N2D (and on C3D) do support it: see [Live-migrating a Confidential VM](#live-migrating-a-confidential-vm) below.
 
 ## Prerequisites
 
@@ -74,6 +74,20 @@ module "atlantis" {
   # insert the 7 required variables here
 }
 ```
+
+### Live-migrating a Confidential VM
+
+Confidential VMs default to `on_host_maintenance = "TERMINATE"`, so each Compute Engine host maintenance event tears the VM down and the managed instance group has to recreate it. SEV Confidential VMs on N2D (and on C3D) support [live migration](https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/troubleshoot-live-migration) instead. To keep such an instance running through maintenance events:
+
+```hcl
+enable_confidential_vm     = true
+machine_type               = "n2d-standard-2"
+confidential_instance_type = "SEV"
+min_cpu_platform           = "AMD Milan"
+on_host_maintenance        = "MIGRATE"
+```
+
+SEV_SNP and TDX Confidential VMs still require `TERMINATE`, see the [supported configurations](https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/supported-configurations).
 
 ## How to deploy
 
@@ -235,10 +249,11 @@ No modules.
 | <a name="input_args"></a> [args](#input\_args) | Arguments to override the container image default command (CMD). | `list(string)` | `[]` | no |
 | <a name="input_block_project_ssh_keys_enabled"></a> [block\_project\_ssh\_keys\_enabled](#input\_block\_project\_ssh\_keys\_enabled) | Blocks the use of project-wide publich SSH keys | `bool` | `false` | no |
 | <a name="input_command"></a> [command](#input\_command) | Command to override the container image ENTRYPOINT | `list(string)` | `[]` | no |
+| <a name="input_confidential_instance_type"></a> [confidential\_instance\_type](#input\_confidential\_instance\_type) | The confidential computing technology the instance uses, e.g. SEV. Required, together with `min_cpu_platform` and `on_host_maintenance = "MIGRATE"`, to live-migrate SEV Confidential VMs on N2D or C3D instead of terminating them on host maintenance. SEV\_SNP and TDX still require TERMINATE | `string` | `null` | no |
 | <a name="input_default_backend_security_policy"></a> [default\_backend\_security\_policy](#input\_default\_backend\_security\_policy) | Name of the security policy to apply to the default backend service | `string` | `null` | no |
 | <a name="input_disk_kms_key_self_link"></a> [disk\_kms\_key\_self\_link](#input\_disk\_kms\_key\_self\_link) | The self link of the encryption key that is stored in Google Cloud KMS | `string` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Domain to associate Atlantis with and to request a managed SSL certificate for. Without `https://` | `string` | n/a | yes |
-| <a name="input_enable_confidential_vm"></a> [enable\_confidential\_vm](#input\_enable\_confidential\_vm) | Enable Confidential VM. If true, on host maintenance will be set to TERMINATE | `bool` | `false` | no |
+| <a name="input_enable_confidential_vm"></a> [enable\_confidential\_vm](#input\_enable\_confidential\_vm) | Enable Confidential VM. On host maintenance defaults to TERMINATE, unless `on_host_maintenance` is set to MIGRATE and the confidential instance type supports live migration (SEV on supported machine types, e.g. n2d with AMD Milan) | `bool` | `false` | no |
 | <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enables OS Login service on the VM | `bool` | `false` | no |
 | <a name="input_env_vars"></a> [env\_vars](#input\_env\_vars) | Key-value pairs representing environment variables and their respective values | `map(any)` | n/a | yes |
 | <a name="input_expose_healthz_publicly"></a> [expose\_healthz\_publicly](#input\_expose\_healthz\_publicly) | Exposes the /healthz endpoint publicly even if Atlantis is protected by IAP | `bool` | `false` | no |
@@ -252,8 +267,10 @@ No modules.
 | <a name="input_labels"></a> [labels](#input\_labels) | Key-value pairs representing labels attaching to instance & instance template | `map(any)` | `{}` | no |
 | <a name="input_machine_image"></a> [machine\_image](#input\_machine\_image) | The machine image to create VMs with, if not specified, latest cos\_cloud/cos\_stable is used. To pin to one, use the following format: projects/cos-cloud/global/images/cos-stable-109-17800-147-54 | `string` | `null` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to run Atlantis on | `string` | `"n2-standard-2"` | no |
+| <a name="input_min_cpu_platform"></a> [min\_cpu\_platform](#input\_min\_cpu\_platform) | The minimum CPU platform for the instance. Required for SEV live migration (AMD Milan on N2D, AMD Genoa on C3D) and for SEV\_SNP (AMD Milan) | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Custom name that's used during resource creation | `string` | n/a | yes |
 | <a name="input_network"></a> [network](#input\_network) | Name of the network | `string` | n/a | yes |
+| <a name="input_on_host_maintenance"></a> [on\_host\_maintenance](#input\_on\_host\_maintenance) | The behaviour of the VM during Compute Engine host maintenance, MIGRATE or TERMINATE. When null, the module default applies: TERMINATE for Confidential VMs, MIGRATE otherwise. Spot VMs always use TERMINATE | `string` | `null` | no |
 | <a name="input_persistent_disk_size_gb"></a> [persistent\_disk\_size\_gb](#input\_persistent\_disk\_size\_gb) | The size of the persistent disk that Atlantis uses to store its data on | `number` | `50` | no |
 | <a name="input_persistent_disk_type"></a> [persistent\_disk\_type](#input\_persistent\_disk\_type) | The type of persistent disk that Atlantis uses to store its data on | `string` | `"pd-ssd"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The ID of the project in which the resource belongs | `string` | `null` | no |
