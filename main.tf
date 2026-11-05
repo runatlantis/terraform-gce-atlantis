@@ -276,7 +276,7 @@ resource "google_compute_instance_group_manager" "default" {
 
   auto_healing_policies {
     health_check      = google_compute_health_check.default_instance_group_manager.id
-    initial_delay_sec = 30
+    initial_delay_sec = var.auto_healing_initial_delay_sec
   }
 
   target_size = 1
