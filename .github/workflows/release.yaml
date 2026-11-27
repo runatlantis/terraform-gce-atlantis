@@ -3,12 +3,11 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branch:
+    branches:
       - main
 
 permissions:
   contents: write
-  metadata: read
   pull-requests: write
   statuses: read
 jobs:
@@ -25,7 +24,7 @@ jobs:
           persist-credentials: false
 
       - name: Set correct Node.js version
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 26
 
