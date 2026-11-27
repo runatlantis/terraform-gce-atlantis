@@ -126,6 +126,7 @@ resource "google_compute_instance_template" "default" {
   instance_description    = "VM running Atlantis in a containerized environment using Docker"
   region                  = var.region
   machine_type            = var.machine_type
+  min_cpu_platform        = var.min_cpu_platform
   can_ip_forward          = false
   metadata_startup_script = var.startup_script
 
@@ -144,8 +145,12 @@ resource "google_compute_instance_template" "default" {
     automatic_restart           = var.spot_machine_enabled ? false : true
     preemptible                 = var.spot_machine_enabled ? true : false
     provisioning_model          = var.spot_machine_enabled ? "SPOT" : "STANDARD"
-    on_host_maintenance         = (var.spot_machine_enabled || var.enable_confidential_vm) ? "TERMINATE" : "MIGRATE"
     instance_termination_action = var.spot_machine_enabled ? "STOP" : null
+
+    on_host_maintenance = var.spot_machine_enabled ? "TERMINATE" : coalesce(
+      var.on_host_maintenance,
+      var.enable_confidential_vm ? "TERMINATE" : "MIGRATE",
+    )
   }
 
   # Ephemeral OS boot disk
@@ -210,6 +215,7 @@ resource "google_compute_instance_template" "default" {
 
   confidential_instance_config {
     enable_confidential_compute = var.enable_confidential_vm
+    confidential_instance_type  = var.confidential_instance_type
   }
 
   tags    = concat(local.atlantis_network_traffic_tags, var.tags)
