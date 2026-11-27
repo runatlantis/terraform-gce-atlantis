@@ -3,12 +3,11 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branch:
+    branches:
       - main
 
 permissions:
   contents: write
-  metadata: read
   pull-requests: write
   statuses: read
 jobs:
